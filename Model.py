@@ -554,7 +554,7 @@ class Model:
                     
     def exportSectionsNeutral(self,XIDs,filename):
         for XID in XIDs:
-            intro = '   -1\n   100\n<NULL>\n21.1,\n   -1\n'
+            intro = '   -1\n   100\n<NULL>\n19.1,\n   -1\n'
             section = self.sections.get(XID)
             MIDs = []
             node_block = '   -1\n   403\n'
@@ -584,7 +584,7 @@ class Model:
             f.write(element_block)
             f.close()
     def exportSectionsContour(self,XIDs,filename,criteria):
-        intro = '   -1\n   100\n<NULL>\n21.1,\n   -1\n'
+        intro = '   -1\n   100\n<NULL>\n19.1,\n   -1\n'
         for XID in XIDs:
             print('Exporting results for crosss-section {}...'.format(XID))
             section = self.sections.get(XID)

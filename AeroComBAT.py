@@ -460,7 +460,6 @@ class GUI:
         xsect_loading_layout.addWidget(warpFactor_field, row=5, col=1)
         xsect_loading_layout.addWidget(calcWarpButton, row=6, col=0)
         sectionLoading.addWidget(xsect_loading_layout)
-        test="1"
         
         
         # Display GUI
