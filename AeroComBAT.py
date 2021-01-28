@@ -483,6 +483,7 @@ class GUI:
             if self.xsectDropDown.currentText()=='':
                 print('Please select a cross-section so that you can see the available'\
                       ' list of Load IDs.')
+                self.load_source_vals.addItem('')
             else:
                 currentXID = int(self.xsectDropDown.currentText())
                 if currentXID not in self.Model.sectionLoads.keys():

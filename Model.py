@@ -679,6 +679,8 @@ class Model:
         else:
             currentXID = int(self.GUI.xsectDropDown.currentText())
             self.GUI.sectionLabel.setText('Cross-section: {} '.format(currentXID))
+            if self.GUI.load_source_drop.currentText()=='Load ID':
+                self.GUI.updateLSIDsDrop()
             try:
                 tmpXSect = self.sections.get(currentXID)
             except Exception as e: print(str(e))
@@ -960,9 +962,9 @@ class Model:
                     try:
                         XID = int(data[0])
                         LCID = int(data[1])
-                        xtmp = int(data[2])
-                        ytmp = int(data[3])
-                        ztmp = int(data[4])
+                        xtmp = float(data[2])
+                        ytmp = float(data[3])
+                        ztmp = float(data[4])
                         Fxtmp = float(data[5])
                         Fytmp = float(data[6])
                         Fztmp = float(data[7])

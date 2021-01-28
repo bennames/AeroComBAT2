@@ -6225,14 +6225,14 @@ class XSect:
         th = np.dot(np.linalg.inv(self.T2),frc)
         if stress:
             for EID, elem in self.elemDict.items():
-                if not LCID in elem.Sig.keys():
+                if not LCID in elem.Sig.keys() or LCID==0:
                     elem.calcStress(LCID,th)
         if strain:
-            for EID, elem in self.elemDict.items():
+            for EID, elem in self.elemDict.items() or LCID==0:
                 if not LCID in elem.Eps.keys():
                     elem.calcStrain(LCID,th)
         if disp:
-            for EID, elem in self.elemDict.items():
+            for EID, elem in self.elemDict.items() or LCID==0:
                 if not LCID in elem.U.keys():
                     elem.calcDisp(LCID,th)
         print('Finished loading cross-section {} with LCID {}'.format(self.XID,LCID))
