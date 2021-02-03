@@ -2292,7 +2292,7 @@ class XQUAD4(XELEMENT):
         s7 = '0.,0.,0.,\n'
         s8 = '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n'
         s9 = '0,\n'
-        return s1+s2+s3+s4+s5+s6+s7+s8+s9
+        return s1+s2+s3+s4+s5+s6+s7+s8
                        
 class XQUAD6(XELEMENT):
     def __init__(self,EID,nodes,material,**kwargs):
@@ -2581,7 +2581,7 @@ class XQUAD6(XELEMENT):
         s7 = '0.,0.,0.,\n'
         s8 = '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n'
         s9 = '0,\n'
-        return s1+s2+s3+s4+s5+s6+s7+s8+s9
+        return s1+s2+s3+s4+s5+s6+s7+s8
                        
 class XQUAD8(XELEMENT):
     def __init__(self,EID,nodes,material,**kwargs):
@@ -2912,7 +2912,7 @@ class XQUAD8(XELEMENT):
         s7 = '0.,0.,0.,\n'
         s8 = '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n'
         s9 = '0,\n'
-        return s1+s2+s3+s4+s5+s6+s7+s8+s9
+        return s1+s2+s3+s4+s5+s6+s7+s8
                        
 class XQUAD9(XELEMENT):
     def __init__(self,EID,nodes,material,**kwargs):
@@ -3241,7 +3241,7 @@ class XQUAD9(XELEMENT):
         s7 = '0.,0.,0.,\n'
         s8 = '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n'
         s9 = '0,\n'
-        return s1+s2+s3+s4+s5+s6+s7+s8+s9
+        return s1+s2+s3+s4+s5+s6+s7+s8
                        
 class XTRIA3(XELEMENT):
     def __init__(self,EID,nodes,material,**kwargs):
@@ -3488,7 +3488,7 @@ class XTRIA3(XELEMENT):
         s7 = '0.,0.,0.,\n'
         s8 = '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n'
         s9 = '0,\n'
-        return s1+s2+s3+s4+s5+s6+s7+s8+s9
+        return s1+s2+s3+s4+s5+s6+s7+s8
                        
 class XTRIA6(XELEMENT):
     def __init__(self,EID,nodes,material,**kwargs):
@@ -3774,7 +3774,7 @@ class XTRIA6(XELEMENT):
     def writeToNeutral(self):
         s1 = '{},124,{},17,3,1,0,0,0,0,0,0,0,0,0,\n'.format(self.EID,self.MID)
         s2 = '0,0,0,0,0,0,0,0,0,0,0,0,\n'
-        s3 = '{},{},{},{},{},{},0,0,0,0,\n'.format(self.NIDs[0],self.NIDs[1],\
+        s3 = '{},{},{},0,{},{},{},0,0,0,\n'.format(self.NIDs[0],self.NIDs[1],\
                                                  self.NIDs[2],self.NIDs[3],\
                                                  self.NIDs[4],self.NIDs[5])
         s4 = '0,0,0,0,0,0,0,0,0,0,\n'
@@ -3783,7 +3783,7 @@ class XTRIA6(XELEMENT):
         s7 = '0.,0.,0.,\n'
         s8 = '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n'
         s9 = '0,\n'
-        return s1+s2+s3+s4+s5+s6+s7+s8+s9
+        return s1+s2+s3+s4+s5+s6+s7+s8
         
 
 class XElementLibrary:

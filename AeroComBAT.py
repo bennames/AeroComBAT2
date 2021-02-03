@@ -1611,12 +1611,29 @@ class LoadNastranPopup(DockArea):
         export_layout = pg.LayoutWidget()
         # Select Which Sections to Export
         xdir_label = QtGui.QLabel('Cross-Section x-direction:')
-        xdir = QtGui.QLineEdit()
+        xdir = QtGui.QComboBox()
+        xdir.addItem('+x')
+        xdir.addItem('-x')
+        xdir.addItem('+y')
+        xdir.addItem('-y')
+        xdir.addItem('+z')
+        xdir.addItem('-z')
         self.widgets += [xdir]
         ydir_label = QtGui.QLabel('Cross-Section y-direction:')
-        ydir = QtGui.QLineEdit()
+        ydir = QtGui.QComboBox()
+        ydir.addItem('+x')
+        ydir.addItem('-x')
+        ydir.addItem('+y')
+        ydir.addItem('-y')
+        ydir.addItem('+z')
+        ydir.addItem('-z')
         self.widgets += [ydir]
+        #Add XID
+        XID_label = QtGui.QLabel('Cross-Section ID (Optional):')
+        XID_field = QtGui.QLineEdit()
+        XID_field.setValidator(QtGui.QIntValidator())
         # Export Sections button
+        self.widgets += [XID_field]
         loadNastran = QtGui.QPushButton('Load Nastran File')
         loadNastran.clicked.connect(self.pressed)
         self.widgets += [loadNastran]
@@ -1634,8 +1651,9 @@ class LoadNastranPopup(DockArea):
         self.show()
     
     def pressed(self):
-        xdir = self.widgets[0].text()
-        ydir = self.widgets[1].text()
+        xdir = self.widgets[0].currentText()
+        ydir = self.widgets[1].currentText()
+        XID = self.widgets[2].currentText()
         validDirs = ['+x','-x','+y','-y','+z','-z']
         if (xdir in validDirs) and (ydir in validDirs):
             if xdir[-1]==ydir[-1]:
@@ -1666,7 +1684,11 @@ class LoadNastranPopup(DockArea):
                     ydir=3
                 else:
                     ydir=-3
-                self.Model.translateNastranDat(self.filenames,xdir,ydir)
+                
+                if XID=="":
+                    self.Model.translateNastranDat(self.filenames,xdir,ydir)
+                else:
+                    self.Model.translateNastranDat(self.filenames,xdir,ydir,XID=int(XID))
                 self.destroy()
             
         else:
@@ -1686,11 +1708,29 @@ class LoadCSVPopup(DockArea):
         export_layout = pg.LayoutWidget()
         # Select Which Sections to Export
         xdir_label = QtGui.QLabel('Loading x-direction:')
-        xdir = QtGui.QLineEdit()
+        xdir = QtGui.QComboBox()
+        xdir.addItem('+x')
+        xdir.addItem('-x')
+        xdir.addItem('+y')
+        xdir.addItem('-y')
+        xdir.addItem('+z')
+        xdir.addItem('-z')
         self.widgets += [xdir]
         ydir_label = QtGui.QLabel('Loading y-direction:')
-        ydir = QtGui.QLineEdit()
+        ydir = QtGui.QComboBox()
+        ydir.addItem('+x')
+        ydir.addItem('-x')
+        ydir.addItem('+y')
+        ydir.addItem('-y')
+        ydir.addItem('+z')
+        ydir.addItem('-z')
         self.widgets += [ydir]
+        #Add LF
+        LF_label = QtGui.QLabel('Load Factor:')
+        LF_field = QtGui.QLineEdit()
+        LF_field.setValidator(QtGui.QDoubleValidator())
+        LF_field.setText('1.00')
+        self.widgets += [LF_field]
         # Export Sections button
         loadNastran = QtGui.QPushButton('Load CSV File')
         loadNastran.clicked.connect(self.pressed)
@@ -1700,7 +1740,9 @@ class LoadCSVPopup(DockArea):
         export_layout.addWidget(xdir,row=0,col=1)
         export_layout.addWidget(ydir_label,row=1,col=0)
         export_layout.addWidget(ydir,row=1,col=1)
-        export_layout.addWidget(loadNastran,row=2,col=0)
+        export_layout.addWidget(LF_label,row=2,col=0)
+        export_layout.addWidget(LF_field,row=2,col=1)
+        export_layout.addWidget(loadNastran,row=3,col=0)
         
         d1.addWidget(export_layout)
         
@@ -1709,13 +1751,16 @@ class LoadCSVPopup(DockArea):
         self.show()
     
     def pressed(self):
-        xdir = self.widgets[0].text()
-        ydir = self.widgets[1].text()
+        xdir = self.widgets[0].currentText()
+        ydir = self.widgets[1].currentText()
+        LF = float(self.widgets[2].currentText())
         validDirs = ['+x','-x','+y','-y','+z','-z']
         if (xdir in validDirs) and (ydir in validDirs):
             if xdir[-1]==ydir[-1]:
                 print('The x and y global directions cannot be the same. Both'\
                       ' are currently set to {}.'.format(xdir))
+            elif LF==0:
+                print('Please enter a load factor that is not 0.')
             else:
                 if xdir=='+x':
                     xdir=1
@@ -1741,7 +1786,8 @@ class LoadCSVPopup(DockArea):
                     ydir=3
                 else:
                     ydir=-3
-                self.Model.importSectionLoads(self.filenames,xdir,ydir)
+                
+                self.Model.importSectionLoads(self.filenames,xdir,ydir,LF=LF)
                 self.destroy()
             
         else:

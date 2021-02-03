@@ -431,7 +431,7 @@ class Model:
                         print('Created cross-section {}!\n'.format(XID))
         print('Finished reading {}!'.format(fileName))
     
-    def translateNastranDat(self,filenames,xdir,ydir):
+    def translateNastranDat(self,filenames,xdir,ydir,XID=""):
         print('Translating NASTRAN to AeroComBAT input file...')
         try:
             from pyNastran.bdf.bdf import BDF
@@ -513,7 +513,9 @@ class Model:
                         n6 = node_ids[5]
                         f.write('XTRIA6,{},{},{},{},{},{},{},{}\n'.format(EID,\
                             n1,n2,n3,n4,n5,n6,mid))
-                if len(self.sections.getIDs())==0:
+                if not XID=="":
+                    section=XID
+                elif len(self.sections.getIDs())==0:
                     section = 1
                 else:
                     section = max(self.sections.getIDs())+1
@@ -929,7 +931,7 @@ class Model:
                 self.tol = 1e-12
         else:
             self.tol = 1e-12
-    def importSectionLoads(self,filenames,xdir,ydir):
+    def importSectionLoads(self,filenames,xdir,ydir,LF=1):
         for filename in filenames:
             if len(self.sectionLSIDs.keys())==0:
                 LSID = 1
@@ -965,12 +967,12 @@ class Model:
                         xtmp = float(data[2])
                         ytmp = float(data[3])
                         ztmp = float(data[4])
-                        Fxtmp = float(data[5])
-                        Fytmp = float(data[6])
-                        Fztmp = float(data[7])
-                        Mxtmp = float(data[8])
-                        Mytmp = float(data[9])
-                        Mztmp = float(data[10])
+                        Fxtmp = float(data[5])*LF
+                        Fytmp = float(data[6])*LF
+                        Fztmp = float(data[7])*LF
+                        Mxtmp = float(data[8])*LF
+                        Mytmp = float(data[9])*LF
+                        Mztmp = float(data[10])*LF
                         if XID in self.sectionLoads.keys():
                             section_load_dict = self.sectionLoads[XID]
                         else:
