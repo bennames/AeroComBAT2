@@ -617,9 +617,13 @@ class Model:
             outputSetStrs = '   -1\n   450\n'
             outputVecStrs = '   -1\n  1051\n'
             for LCID in LCIDs:
-                print('   -LCID: {}'.format(LCID))
-                outputSetStrs += '{},\n'.format(LCID)
-                outputSetStrs += 'AeroComBAT Case {},\n'.format(LCID)
+                if LCID==0:
+                    outLCID=1001
+                else:
+                    outLCID=LCID
+                print('   -LCID: {}'.format(outLCID))
+                outputSetStrs += '{},\n'.format(outLCID)
+                outputSetStrs += 'AeroComBAT Case {},\n'.format(outLCID)
                 outputSetStrs += '0,1,0,0,\n'
                 outputSetStrs += '0.\n'
                 outputSetStrs += '1,\n'
@@ -634,7 +638,7 @@ class Model:
                 for crit in criteria:
                     print('      -Criteria: {}'.format(crit))
                     vecID = self.critVecID[crit]
-                    outputVecStrs += '{},{},1,\n'.format(LCID,vecID)
+                    outputVecStrs += '{},{},1,\n'.format(outLCID,vecID)
                     outputVecStrs += '{}\n'.format(crit)
                     outputVecStrs += '9.9900002E+30,-9.9900002E+30,9.9900002E+30,\n'
                     outputVecStrs += '0,0,0,0,0,0,0,0,0,0,\n'
@@ -643,7 +647,7 @@ class Model:
                     outputVecStrs += '0,0,0,8,0,\n'
                     outputVecStrs += '1,0,1,0,\n'
                     for EID, elem in section.elemDict.items():
-                        data = elem.getContour([LCID],crit=crit,centroid=True)
+                        data = elem.getContour([outLCID],crit=crit,centroid=True)
                         outputVecStrs += '{},{},\n'.format(EID,data[0])
                     outputVecStrs += '-1,0.,\n'
             outputSetStrs += '   -1\n'
