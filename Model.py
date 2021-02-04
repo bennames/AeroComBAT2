@@ -624,7 +624,7 @@ class Model:
                 outputSetStrs += '0.\n'
                 outputSetStrs += '1,\n'
                 outputSetStrs += 'AeroComBAT section loads analysis for cross-section {}\n'.format(XID)
-                outputSetStrs += '0,0,1,\n'
+                outputSetStrs += '1,3,1,\n'
                 outputSetStrs += '-1,-1,0.,\n'
                 outputSetStrs += '0,0,\n'
                 outputSetStrs += '0,\n'

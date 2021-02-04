@@ -750,7 +750,7 @@ class Material:
         propStr += '{}\n'.format(self.name)
         propStr += '0,0,0,0,0,0,0,0,\n'
         propStr += '10,\n'
-        propStr += '1,1,0,0,0,0,0,0,\n'
+        propStr += '{},{},0,0,0,0,0,0,\n'.format(self.MID,self.MID)
         propStr += '0,0,\n'
         propStr += '78,\n'
         propStr += '0.1,0.,0.,0.,0.,\n'

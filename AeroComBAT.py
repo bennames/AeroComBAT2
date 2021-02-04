@@ -1753,7 +1753,7 @@ class LoadCSVPopup(DockArea):
     def pressed(self):
         xdir = self.widgets[0].currentText()
         ydir = self.widgets[1].currentText()
-        LF = float(self.widgets[2].currentText())
+        LF = float(self.widgets[2].text())
         validDirs = ['+x','-x','+y','-y','+z','-z']
         if (xdir in validDirs) and (ydir in validDirs):
             if xdir[-1]==ydir[-1]:
