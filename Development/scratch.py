@@ -1,111 +1,166 @@
-from Model import Model
+#from Model import Model
 import time
 import numpy as np
 from numba import jit, njit, prange
 from numba import vectorize, float64
+import numpy.polynomial.polynomial as poly
+from scipy import linalg
 
 
 import cProfile
 import pstats
 
-model = Model()
-model.loadDat(r'C:\Users\benna\Desktop\Work Temp\SNC\FAST\SIMPLE_SECTIONS\CQUAD4_AeroComBAT.dat')
-model.loadDat(r'C:\Users\benna\Desktop\Work Temp\SNC\FAST\SIMPLE_SECTIONS\CTRIA3_AeroComBAT.dat')
-model.loadDat(r'C:\Users\benna\Desktop\Work Temp\SNC\FAST\SIMPLE_SECTIONS\CQUAD8_AeroComBAT.dat')
-
-xsect1 = model.sections.get(1)
-xsect2 = model.sections.get(2)
-xsect3 = model.sections.get(3)
-
-elem1 = model.xelements.get(1)
-elem2 = model.xelements.get(401)
-elem3 = model.xelements.get(801)
-
-etas = np.random.rand(10000)
-xis = np.random.rand(10000)
-
-@njit
-def N_master(EID,eta,xi,xs,ys):
-    # DN/Dxi
-    dNdxi = np.zeros(8)
-    dNdxi[0] = (-eta + 1)*(0.25*xi - 0.25) + 0.25*(-eta + 1)*(eta + xi + 1)
-    dNdxi[1] = -1.0*xi*(-eta + 1)
-    dNdxi[2] = -(-eta + 1)*(-0.25*xi - 0.25) - 0.25*(-eta + 1)*(eta - xi + 1)
-    dNdxi[3] = -0.5*eta**2 + 0.5
-    dNdxi[4] = -(eta + 1)*(-0.25*xi - 0.25) - 0.25*(eta + 1)*(-eta - xi + 1)
-    dNdxi[5] = -1.0*xi*(eta + 1)
-    dNdxi[6] = (eta + 1)*(0.25*xi - 0.25) + 0.25*(eta + 1)*(-eta + xi + 1)
-    dNdxi[7] = 0.5*eta**2 - 0.5
-    # DN/Deta
-    dNdeta = np.zeros(8)
-    dNdeta[0] = (-eta + 1)*(0.25*xi - 0.25) - (0.25*xi - 0.25)*(eta + xi + 1)
-    dNdeta[1] = 0.5*xi**2 - 0.5
-    dNdeta[2] = (-eta + 1)*(-0.25*xi - 0.25) - (-0.25*xi - 0.25)*(eta - xi + 1)
-    dNdeta[3] = -2*eta*(0.5*xi + 0.5)
-    dNdeta[4] = -(eta + 1)*(-0.25*xi - 0.25) + (-0.25*xi - 0.25)*(-eta - xi + 1)
-    dNdeta[5] = -0.5*xi**2 + 0.5
-    dNdeta[6] = -(eta + 1)*(0.25*xi - 0.25) + (0.25*xi - 0.25)*(-eta + xi + 1)
-    dNdeta[7] = -2*eta*(-0.5*xi + 0.5)
-    
-    J11 = np.dot(dNdxi,xs)
-    J12 = np.dot(dNdxi,ys)
-    J21 = np.dot(dNdeta,xs)
-    J22 = np.dot(dNdeta,ys)
-    det = J11*J22-J12*J21
-    # if det==0:
-    #     print('WARNING: Element {} has an indeterminate jacobian. Please check the element.\n',EID)
-    # Jinvmat = np.zeros((3,3))
-    # Jinvmat[0,0] = J22/det
-    # Jinvmat[0,1] = -J12/det
-    # Jinvmat[1,0] = -J12/det
-    # Jinvmat[1,1] = J11/det
-    # Jinvmat[2,2] = 1/det
-    Jinvmat11 = J22/det
-    Jinvmat12 = -J12/det
-    Jinvmat22 = J11/det
-    Jinvmat33 = 1/det
-    #Jinvmat = (1/det)*np.array([[J22,-J12,0],[-J21,J11,0],[0,0,1]])
-    det = np.abs(det)
-    return det, Jinvmat11, Jinvmat12, Jinvmat22, Jinvmat33
-
-# @vectorize([float64(float64, float64)])
-# def dot(x,y):
-#     return x*y
-
 t0 = time.time()
+for i in range(0,100000):
+    sig_xx = 1#*np.random.rand()
+    sig_yy = 4#*np.random.rand()
+    sig_zz = 9#*np.random.rand()
+    sig_yz = 5#*np.random.rand()
+    sig_xz = 3#*np.random.rand()
+    sig_xy = 2#*np.random.rand()
+    stress_state = np.array([[sig_xx,sig_xy,sig_xz],\
+                             [sig_xy,sig_yy,sig_yz],\
+                             [sig_xz,sig_yz,sig_zz]])
+    eigs,trash = np.linalg.eig(stress_state)
+    max_eig = max(eigs)
 
-for i in range(0,len(etas)):
-    J1, Jinvmat1 = elem.Jdet_inv(etas[i],xis[i])
-    
 t1 = time.time()
-
 print('Time taken: {}'.format(t1-t0))
+print('Eigenvalues: {}'.format(eigs))
 
-t0
+t2 = time.time()
+for i in range(0,100000):
+    sig_xx = 1#*np.random.rand()
+    sig_yy = 4#*np.random.rand()
+    sig_zz = 9#*np.random.rand()
+    sig_yz = 5#*np.random.rand()
+    sig_xz = 3#*np.random.rand()
+    sig_xy = 2#*np.random.rand()
+    A = sig_xx+sig_yy+sig_zz
+    B = sig_xx*sig_yy+sig_yy*sig_zz+sig_xx*sig_zz-sig_xy**2-sig_yz**2-sig_xz**2
+    C = sig_xx*sig_yy*sig_zz+2*sig_xy*sig_yz*sig_xz-\
+        sig_xx*sig_yz**2-sig_yy*sig_xz**2-sig_zz*sig_xy**2
+    max_roots = max(poly.polyroots([-C,B,-A,1]))
 
-for i in range(0,len(etas)):
-    J2, Jinvmat11, Jinvmat12, Jinvmat22, Jinvmat33 = N_master(elem.EID,etas[i],xis[i],elem.xs,elem.ys)
+t3 = time.time()
+print('Time taken: {}'.format(t3-t2))
+print('Eigenvalues: {}'.format(max_roots))
+
+t4 = time.time()
+for i in range(0,100000):
+    sig_xx = 1#*np.random.rand()
+    sig_yy = 4#*np.random.rand()
+    sig_zz = 9#*np.random.rand()
+    sig_yz = 5#*np.random.rand()
+    sig_xz = 3#*np.random.rand()
+    sig_xy = 2#*np.random.rand()
+    stress_state = np.array([[sig_xx,sig_xy,sig_xz],\
+                             [sig_xy,sig_yy,sig_yz],\
+                             [sig_xz,sig_yz,sig_zz]])
+    eig_vals = max(np.real(linalg.eigvals(stress_state,check_finite=False)))
+
+t5 = time.time()
+print('Time taken: {}'.format(t5-t4))
+print('Eigenvalues: {}'.format(eig_vals))
+
+# model = Model()
+# model.loadDat(r'C:\Users\benna\Desktop\Work Temp\SNC\FAST\SIMPLE_SECTIONS\CQUAD4_AeroComBAT.dat')
+# model.loadDat(r'C:\Users\benna\Desktop\Work Temp\SNC\FAST\SIMPLE_SECTIONS\CTRIA3_AeroComBAT.dat')
+# model.loadDat(r'C:\Users\benna\Desktop\Work Temp\SNC\FAST\SIMPLE_SECTIONS\CQUAD8_AeroComBAT.dat')
+
+# xsect1 = model.sections.get(1)
+# xsect2 = model.sections.get(2)
+# xsect3 = model.sections.get(3)
+
+# elem1 = model.xelements.get(1)
+# elem2 = model.xelements.get(401)
+# elem3 = model.xelements.get(801)
+
+# etas = np.random.rand(10000)
+# xis = np.random.rand(10000)
+
+# @njit
+# def N_master(EID,eta,xi,xs,ys):
+#     # DN/Dxi
+#     dNdxi = np.zeros(8)
+#     dNdxi[0] = (-eta + 1)*(0.25*xi - 0.25) + 0.25*(-eta + 1)*(eta + xi + 1)
+#     dNdxi[1] = -1.0*xi*(-eta + 1)
+#     dNdxi[2] = -(-eta + 1)*(-0.25*xi - 0.25) - 0.25*(-eta + 1)*(eta - xi + 1)
+#     dNdxi[3] = -0.5*eta**2 + 0.5
+#     dNdxi[4] = -(eta + 1)*(-0.25*xi - 0.25) - 0.25*(eta + 1)*(-eta - xi + 1)
+#     dNdxi[5] = -1.0*xi*(eta + 1)
+#     dNdxi[6] = (eta + 1)*(0.25*xi - 0.25) + 0.25*(eta + 1)*(-eta + xi + 1)
+#     dNdxi[7] = 0.5*eta**2 - 0.5
+#     # DN/Deta
+#     dNdeta = np.zeros(8)
+#     dNdeta[0] = (-eta + 1)*(0.25*xi - 0.25) - (0.25*xi - 0.25)*(eta + xi + 1)
+#     dNdeta[1] = 0.5*xi**2 - 0.5
+#     dNdeta[2] = (-eta + 1)*(-0.25*xi - 0.25) - (-0.25*xi - 0.25)*(eta - xi + 1)
+#     dNdeta[3] = -2*eta*(0.5*xi + 0.5)
+#     dNdeta[4] = -(eta + 1)*(-0.25*xi - 0.25) + (-0.25*xi - 0.25)*(-eta - xi + 1)
+#     dNdeta[5] = -0.5*xi**2 + 0.5
+#     dNdeta[6] = -(eta + 1)*(0.25*xi - 0.25) + (0.25*xi - 0.25)*(-eta + xi + 1)
+#     dNdeta[7] = -2*eta*(-0.5*xi + 0.5)
     
-t1 = time.time()
-print('Time taken: {}'.format(t1-t0))
+#     J11 = np.dot(dNdxi,xs)
+#     J12 = np.dot(dNdxi,ys)
+#     J21 = np.dot(dNdeta,xs)
+#     J22 = np.dot(dNdeta,ys)
+#     det = J11*J22-J12*J21
+#     # if det==0:
+#     #     print('WARNING: Element {} has an indeterminate jacobian. Please check the element.\n',EID)
+#     # Jinvmat = np.zeros((3,3))
+#     # Jinvmat[0,0] = J22/det
+#     # Jinvmat[0,1] = -J12/det
+#     # Jinvmat[1,0] = -J12/det
+#     # Jinvmat[1,1] = J11/det
+#     # Jinvmat[2,2] = 1/det
+#     Jinvmat11 = J22/det
+#     Jinvmat12 = -J12/det
+#     Jinvmat22 = J11/det
+#     Jinvmat33 = 1/det
+#     #Jinvmat = (1/det)*np.array([[J22,-J12,0],[-J21,J11,0],[0,0,1]])
+#     det = np.abs(det)
+#     return det, Jinvmat11, Jinvmat12, Jinvmat22, Jinvmat33
 
-print(J2-J1)
+# # @vectorize([float64(float64, float64)])
+# # def dot(x,y):
+# #     return x*y
 
-import cProfile, pstats
-pr = cProfile.Profile()
-pr.enable()
-for i in range(0,len(etas)):
-    x2 = N_master(elem.EID,etas[i],xis[i],elem.xs,elem.ys)
-pr.disable()
-pr.print_stats()
+# t0 = time.time()
+
+# for i in range(0,len(etas)):
+#     J1, Jinvmat1 = elem.Jdet_inv(etas[i],xis[i])
+    
+# t1 = time.time()
+
+# print('Time taken: {}'.format(t1-t0))
+
+# t0
+
+# for i in range(0,len(etas)):
+#     J2, Jinvmat11, Jinvmat12, Jinvmat22, Jinvmat33 = N_master(elem.EID,etas[i],xis[i],elem.xs,elem.ys)
+    
+# t1 = time.time()
+# print('Time taken: {}'.format(t1-t0))
+
+# print(J2-J1)
+
+# import cProfile, pstats
+# pr = cProfile.Profile()
+# pr.enable()
+# for i in range(0,len(etas)):
+#     x2 = N_master(elem.EID,etas[i],xis[i],elem.xs,elem.ys)
+# pr.disable()
+# pr.print_stats()
 
 
-pr = cProfile.Profile()
-pr.enable()
-for i in range(0,len(etas)):
-    x1 = elem.x(etas[i],xis[i])
-pr.disable()
-pr.print_stats()
+# pr = cProfile.Profile()
+# pr.enable()
+# for i in range(0,len(etas)):
+#     x1 = elem.x(etas[i],xis[i])
+# pr.disable()
+# pr.print_stats()
 
 
 # xsect.printSummary()

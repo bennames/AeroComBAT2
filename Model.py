@@ -7,6 +7,7 @@ import copy
 from scipy import linalg
 from scipy.sparse import csr_matrix
 from scipy.sparse.linalg import minres
+import os.path
 
 
 class Model:
@@ -554,7 +555,11 @@ class Model:
         file.close()
         
                     
-    def exportSectionsNeutral(self,XIDs,filename):
+    def exportSectionsNeutral(self,XIDs,filename,path=''):
+        if os.path.isdir(path):
+            export_path=path
+        else:
+            export_path=''
         for XID in XIDs:
             intro = '   -1\n   100\n<NULL>\n19.1,\n   -1\n'
             section = self.sections.get(XID)
@@ -578,14 +583,18 @@ class Model:
                 prop_block += tmpPropStr
             mat_block += '   -1\n'
             prop_block += '   -1\n'
-            f = open(filename+'_XID_{}.neu'.format(XID), 'w')
+            f = open(export_path+r'/'+filename+'_XID_{}.neu'.format(XID), 'w')
             f.write(intro)
             f.write(mat_block)
             f.write(prop_block)
             f.write(node_block)
             f.write(element_block)
             f.close()
-    def exportSectionsContour(self,XIDs,filename,criteria):
+    def exportSectionsContour(self,XIDs,filename,criteria,path=''):
+        if os.path.isdir(path):
+            export_path=path
+        else:
+            export_path=''
         intro = '   -1\n   100\n<NULL>\n19.1,\n   -1\n'
         for XID in XIDs:
             print('Exporting results for crosss-section {}...'.format(XID))
@@ -653,7 +662,7 @@ class Model:
             outputSetStrs += '   -1\n'
             outputVecStrs += '   -1\n'
             
-            f = open(filename+'_XID_{}.neu'.format(XID), 'w')
+            f = open(export_path+r'/'+filename+'_XID_{}.neu'.format(XID), 'w')
             f.write(intro)
             f.write(outputSetStrs)
             f.write(outputVecStrs)
@@ -799,9 +808,13 @@ class Model:
             print('Starting analysis on section: {}...'.format(XID))
             section.xSectionAnalysis(tol=self.tol,ref_ax=ref_ax)
             print('Completed analysis on section: {}'.format(XID))
-    def exportSections(self,XIDs,filename):
-        print('Exporting cross-sections...')
-        f = open(filename, 'a')
+    def exportSections(self,XIDs,filename,path=''):
+        print('Exporting cross-sections stiffnesses...')
+        if os.path.isdir(path):
+            export_path=path
+        else:
+            export_path=''
+        f = open(export_path+r'/'+filename+'.csv', 'a')
         for XID in XIDs:
             f.write('Section (tol={}) {}\n'.format(self.tol,XID))
             section = self.sections.get(XID)

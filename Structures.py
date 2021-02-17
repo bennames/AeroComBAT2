@@ -11,6 +11,7 @@ from scipy.sparse import csr_matrix, vstack, hstack, lil_matrix, eye, csc_matrix
 from scipy.sparse.linalg import minres, spsolve, inv#, dsolve, bicg, bicgstab, cg, cgs, gmres, lgmres, minres, qmr, gcrotmk
 from scipy import linalg
 from numpy.linalg import solve
+import numpy.polynomial.polynomial as poly
 
 import time
 

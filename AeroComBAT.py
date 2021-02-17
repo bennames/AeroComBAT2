@@ -1392,6 +1392,10 @@ class ExportSectionsStiffness(DockArea):
         filename_label = QtGui.QLabel('Export filename:')
         filename_string = QtGui.QLineEdit()
         self.widgets += [filename_string]
+        #Path location button
+        filename_path_label = QtGui.QLabel('File Path:')
+        filename_path = QtGui.QLineEdit()
+        self.widgets += [filename_path]
         # Export Sections button
         analyze_sections_button = QtGui.QPushButton('Export Sections Stiffness')
         analyze_sections_button.clicked.connect(self.pressed)
@@ -1401,7 +1405,9 @@ class ExportSectionsStiffness(DockArea):
         export_layout.addWidget(section_ids,row=0,col=1)
         export_layout.addWidget(filename_label,row=1,col=0)
         export_layout.addWidget(filename_string,row=1,col=1)
-        export_layout.addWidget(analyze_sections_button,row=2,col=0)
+        export_layout.addWidget(filename_path_label,row=2,col=0)
+        export_layout.addWidget(filename_path,row=2,col=1)
+        export_layout.addWidget(analyze_sections_button,row=3,col=0)
         
         d1.addWidget(export_layout)
         
@@ -1414,6 +1420,7 @@ class ExportSectionsStiffness(DockArea):
         #try:
         section_ids = ast.literal_eval(self.widgets[0].text())
         filename = self.widgets[1].text()
+        path = self.widgets[2].text().replace("'","").replace('"','')
         proceed=True
         XIDs = []
         for XID in section_ids:
@@ -1423,7 +1430,7 @@ class ExportSectionsStiffness(DockArea):
             else:
                 XIDs += [XID]
         if proceed:
-            self.Model.exportSections(XIDs,filename)
+            self.Model.exportSections(XIDs,filename,path=path)
             self.destroy()
         else:
             print('At least one of the values in the following list is not an integer... \n')
@@ -1444,6 +1451,10 @@ class ExportSectionsNeutral(DockArea):
         filename_label = QtGui.QLabel('Export filename (without .neu):')
         filename_string = QtGui.QLineEdit()
         self.widgets += [filename_string]
+        #Path location button
+        filename_path_label = QtGui.QLabel('File Path:')
+        filename_path = QtGui.QLineEdit()
+        self.widgets += [filename_path]
         # Export Sections button
         analyze_sections_button = QtGui.QPushButton('Export Sections')
         analyze_sections_button.clicked.connect(self.pressed)
@@ -1453,7 +1464,9 @@ class ExportSectionsNeutral(DockArea):
         export_layout.addWidget(section_ids,row=0,col=1)
         export_layout.addWidget(filename_label,row=1,col=0)
         export_layout.addWidget(filename_string,row=1,col=1)
-        export_layout.addWidget(analyze_sections_button,row=2,col=0)
+        export_layout.addWidget(filename_path_label,row=2,col=0)
+        export_layout.addWidget(filename_path,row=2,col=1)
+        export_layout.addWidget(analyze_sections_button,row=3,col=0)
         
         d1.addWidget(export_layout)
         
@@ -1466,6 +1479,7 @@ class ExportSectionsNeutral(DockArea):
         #try:
         section_ids = ast.literal_eval(self.widgets[0].text())
         filename = self.widgets[1].text()
+        path = self.widgets[2].text().replace("'","").replace('"','')
         proceed=True
         XIDs = []
         for XID in section_ids:
@@ -1475,7 +1489,7 @@ class ExportSectionsNeutral(DockArea):
             else:
                 XIDs += [XID]
         if proceed:
-            self.Model.exportSectionsNeutral(XIDs,filename)
+            self.Model.exportSectionsNeutral(XIDs,filename,path=path)
             self.destroy()
         else:
             print('At least one of the values in the following list is not an integer... \n')
@@ -1496,6 +1510,10 @@ class ExportCriteria(DockArea):
         filename_label = QtGui.QLabel('Export filename (without .neu):')
         filename_string = QtGui.QLineEdit()
         self.widgets += [filename_string]
+        #Path location button
+        filename_path_label = QtGui.QLabel('File Path:')
+        filename_path = QtGui.QLineEdit()
+        self.widgets += [filename_path]
         # Export Sections button
         analyze_sections_button = QtGui.QPushButton('Export Results')
         analyze_sections_button.clicked.connect(self.pressed)
@@ -1539,32 +1557,34 @@ class ExportCriteria(DockArea):
         export_layout.addWidget(section_ids,row=0,col=1)
         export_layout.addWidget(filename_label,row=1,col=0)
         export_layout.addWidget(filename_string,row=1,col=1)
-        export_layout.addWidget(analyze_sections_button,row=2,col=0)
-        export_layout.addWidget(crit1_label,row=2,col=1)
-        export_layout.addWidget(crit2_label,row=3,col=1)
-        export_layout.addWidget(crit3_label,row=4,col=1)
-        export_layout.addWidget(crit4_label,row=5,col=1)
-        export_layout.addWidget(crit5_label,row=6,col=1)
-        export_layout.addWidget(crit6_label,row=7,col=1)
-        export_layout.addWidget(crit7_label,row=8,col=1)
-        export_layout.addWidget(crit8_label,row=9,col=1)
-        export_layout.addWidget(crit9_label,row=10,col=1)
-        export_layout.addWidget(crit10_label,row=11,col=1)
-        export_layout.addWidget(crit11_label,row=12,col=1)
-        export_layout.addWidget(crit12_label,row=13,col=1)
-        export_layout.addWidget(crit13_label,row=14,col=1)
-        export_layout.addWidget(crit14_label,row=15,col=1)
-        export_layout.addWidget(crit15_label,row=16,col=1)
-        export_layout.addWidget(crit16_label,row=17,col=1)
-        export_layout.addWidget(crit17_label,row=18,col=1)
-        export_layout.addWidget(crit18_label,row=19,col=1)
-        export_layout.addWidget(crit19_label,row=20,col=1)
-        export_layout.addWidget(crit20_label,row=21,col=1)
-        export_layout.addWidget(crit21_label,row=22,col=1)
-        export_layout.addWidget(crit22_label,row=23,col=1)
-        export_layout.addWidget(crit23_label,row=24,col=1)
-        export_layout.addWidget(crit24_label,row=25,col=1)
-        export_layout.addWidget(crit25_label,row=26,col=1)
+        export_layout.addWidget(filename_path_label,row=2,col=0)
+        export_layout.addWidget(filename_path,row=2,col=1)
+        export_layout.addWidget(analyze_sections_button,row=3,col=0)
+        export_layout.addWidget(crit1_label,row=3,col=1)
+        export_layout.addWidget(crit2_label,row=4,col=1)
+        export_layout.addWidget(crit3_label,row=5,col=1)
+        export_layout.addWidget(crit4_label,row=6,col=1)
+        export_layout.addWidget(crit5_label,row=7,col=1)
+        export_layout.addWidget(crit6_label,row=8,col=1)
+        export_layout.addWidget(crit7_label,row=9,col=1)
+        export_layout.addWidget(crit8_label,row=10,col=1)
+        export_layout.addWidget(crit9_label,row=11,col=1)
+        export_layout.addWidget(crit10_label,row=12,col=1)
+        export_layout.addWidget(crit11_label,row=13,col=1)
+        export_layout.addWidget(crit12_label,row=14,col=1)
+        export_layout.addWidget(crit13_label,row=15,col=1)
+        export_layout.addWidget(crit14_label,row=16,col=1)
+        export_layout.addWidget(crit15_label,row=17,col=1)
+        export_layout.addWidget(crit16_label,row=18,col=1)
+        export_layout.addWidget(crit17_label,row=19,col=1)
+        export_layout.addWidget(crit18_label,row=20,col=1)
+        export_layout.addWidget(crit19_label,row=21,col=1)
+        export_layout.addWidget(crit20_label,row=22,col=1)
+        export_layout.addWidget(crit21_label,row=23,col=1)
+        export_layout.addWidget(crit22_label,row=24,col=1)
+        export_layout.addWidget(crit23_label,row=25,col=1)
+        export_layout.addWidget(crit24_label,row=26,col=1)
+        export_layout.addWidget(crit25_label,row=27,col=1)
         
         
         d1.addWidget(export_layout)
@@ -1578,6 +1598,7 @@ class ExportCriteria(DockArea):
         #try:
         section_ids = ast.literal_eval(self.widgets[0].text())
         filename = self.widgets[1].text()
+        path = self.widgets[2].text().replace("'","").replace('"','')
         proceed=True
         XIDs = []
         for XID in section_ids:
@@ -1591,7 +1612,7 @@ class ExportCriteria(DockArea):
             if box.isChecked():
                 criteria += [box.text()]
         if proceed:
-            self.Model.exportSectionsContour(XIDs,filename,criteria)
+            self.Model.exportSectionsContour(XIDs,filename,criteria,path=path)
             self.destroy()
         else:
             print('At least one of the values in the following list is not an integer... \n')
@@ -1642,7 +1663,9 @@ class LoadNastranPopup(DockArea):
         export_layout.addWidget(xdir,row=0,col=1)
         export_layout.addWidget(ydir_label,row=1,col=0)
         export_layout.addWidget(ydir,row=1,col=1)
-        export_layout.addWidget(loadNastran,row=2,col=0)
+        export_layout.addWidget(XID_label,row=2,col=0)
+        export_layout.addWidget(XID_field,row=2,col=1)
+        export_layout.addWidget(loadNastran,row=3,col=0)
         
         d1.addWidget(export_layout)
         
@@ -1653,7 +1676,7 @@ class LoadNastranPopup(DockArea):
     def pressed(self):
         xdir = self.widgets[0].currentText()
         ydir = self.widgets[1].currentText()
-        XID = self.widgets[2].currentText()
+        XID = self.widgets[2].text()
         validDirs = ['+x','-x','+y','-y','+z','-z']
         if (xdir in validDirs) and (ydir in validDirs):
             if xdir[-1]==ydir[-1]:
