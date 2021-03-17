@@ -5,7 +5,7 @@ model = BDF()
 model.is_nx = True
 
 ### Read In the beam property csvs
-filename = r'D:\SNC IAS\01 - FAST Program\04 - AerComBAT Sections\Selected Section Cuts.csv'
+filename = r"filepath"
 data = np.genfromtxt(filename,delimiter=',',skip_header=True)
 
 ### Add Quasi Iso Mat
@@ -73,4 +73,4 @@ for i in range(0,np.size(data,0)-1):
     nids = [GID1,GID2]
     model.add_cbeam(EID,PID,nids,[x0,y0+1.,z0],None)
     
-model.write_bdf(r'D:\SNC IAS\01 - FAST Program\04 - AerComBAT Sections\equivalent_beam_v4.dat')
+model.write_bdf(r"filepath")
