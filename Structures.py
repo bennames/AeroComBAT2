@@ -1833,7 +1833,7 @@ class XELEMENT:
                         [sigState[6*i+3,0],sigState[6*i+4,0],sigState[6*i+5,0]]])
                     eigs,trash = np.linalg.eig(tmpSigTens)
                     data += [max(eigs)]
-            elif crit=='Minumum Principle Stress':
+            elif crit=='Minimum Principle Stress':
                 for i in range(0,n):
                     tmpSigTens = np.array([[sigState[6*i+0,0],sigState[6*i+2,0],sigState[6*i+3,0]],\
                         [sigState[6*i+2,0],sigState[6*i+1,0],sigState[6*i+4,0]],\
