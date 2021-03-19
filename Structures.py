@@ -254,6 +254,7 @@ class XNode:
         
         """
         # Verify that a correct NID was given
+        self.XID = None
         if type(NID) is int:
             self.NID = NID
         else:
@@ -262,6 +263,12 @@ class XNode:
             raise ValueError('The x, y, and z coordinates must be floats.')
         self.x = [x,y,0.]
         self.type='XNode'
+        self.EIDs = []
+    def setXID(self,XID):
+        self.XID = XID
+    def addEID(self,EID):
+        if not EID in self.EIDs:
+            self.EIDs += [EID]
     def translate(self,dx,dy):
         self.x = [self.x[0]+dx,self.x[1]+dy,0.]
     def printSummary(self):
@@ -279,7 +286,10 @@ class XNode:
         - A printed table including the node ID and it's coordinates
             
         """
-        print(tabulate(([[self.NID,self.x[:2]]]),('NID','Coordinates'),tablefmt="fancy_grid"))
+        print('XNODE {}:'.format(self.NID))
+        print(tabulate(([self.x[:2]]),('x-coordinate','y-coordinate'),tablefmt="fancy_grid"))
+        print('Referenced by elements: {}'.format(self.EIDs))
+        print('Referenced by cross-section {}'.format(self.XID))
     def writeToFile(self):
         """Writes the object to a csv file.
         
@@ -1471,6 +1481,7 @@ class XELEMENT:
         self.nd = nd
         th = kwargs.pop('th', [0.,0.,0.])
         self.th = th
+        self.XID = None
         
         Rxsectsiginv, Rxsectepsinv = genCompRy(90)
         Rxsiginv, Rxepsinv = genCompRx(-th[0])
@@ -1495,6 +1506,7 @@ class XELEMENT:
                              in the nodes array'.format(etype,int(nd/3),len(nodes)))
         nids = []
         for node in nodes:
+            node.addEID(EID)
             nids+= [node.NID]
         if not len(np.unique(nids))==nd/3:
             raise ValueError('The node objects used to create this {} \
@@ -1589,6 +1601,9 @@ class XELEMENT:
         # Save for ease of strain calculation on strain recovery
         self.xs = xs
         self.ys = ys
+        
+    def setXID(self,XID):
+        self.XID = XID
         
     def x(self,eta,xi):
         """Calculate the x-coordinate within the element.
@@ -2231,7 +2246,7 @@ class XQUAD4(XELEMENT):
         if len(LCIDs)==1:
             utmp = self.U[LCIDs[0]]
         else:
-            utmp = self.U[LCIDs[-1]]
+            utmp = self.U[-1]
         for i in range(0,int(self.nd/3)):
             coords += (tuple(self.nodes[i].x),)
             u_warp += (tuple(utmp[3*i:3*i+3,:].T[0]),)
@@ -2262,9 +2277,16 @@ class XQUAD4(XELEMENT):
             associated with the CQUADX element.
             
         """
-        print('XQUAD4 Summary:')
-        headers = ('EID','NID 1','NID 2','NID 3','NID 4','MID')
-        print(tabulate([[self.EID]+self.NIDs+[self.MID]],headers,tablefmt="fancy_grid"))
+        print('ELEMENT {}:'.format(self.EID))
+        print('Element Type: {}'.format(self.type))
+        print('Referenced by cross-section {}'.format(self.XID))
+        print('Node IDs:')
+        headers = ('NID 1','NID 2','NID 3','NID 4')
+        print(tabulate([self.NIDs],headers,tablefmt="fancy_grid"))
+        print('Material ID: {}'.format(self.MID))
+        print('Material rotations:')
+        headers = ('Rx (deg)','Ry (deg)','Rz (deg)')
+        print(tabulate([self.th],headers,tablefmt="fancy_grid"))
         if nodes:
             for node in self.nodes:
                 node.printSummary()
@@ -2514,7 +2536,7 @@ class XQUAD6(XELEMENT):
         if len(LCIDs)==1:
             utmp = self.U[LCIDs[0]]
         else:
-            utmp = self.U[LCIDs[-1]]
+            utmp = self.U[-1]
         for i in range(0,int(self.nd/3)):
             coords += (tuple(self.nodes[i].x),)
             u_warp += (tuple(utmp[3*i:3*i+3,:].T[0]),)
@@ -2550,9 +2572,16 @@ class XQUAD6(XELEMENT):
             associated with the CQUADX element.
             
         """
-        print('XQUAD6 Summary:')
-        headers = ('EID','NID 1','NID 2','NID 3','NID 4','NID 5','NID 6','MID')
-        print(tabulate([[self.EID]+self.NIDs+[self.MID]],headers,tablefmt="fancy_grid"))
+        print('ELEMENT {}:'.format(self.EID))
+        print('Element Type: {}'.format(self.type))
+        print('Referenced by cross-section {}'.format(self.XID))
+        print('Node IDs:')
+        headers = ('NID 1','NID 2','NID 3','NID 4','NID 5','NID 6')
+        print(tabulate([self.NIDs],headers,tablefmt="fancy_grid"))
+        print('Material ID: {}'.format(self.MID))
+        print('Material rotations:')
+        headers = ('Rx (deg)','Ry (deg)','Rz (deg)')
+        print(tabulate([self.th],headers,tablefmt="fancy_grid"))
         if nodes:
             for node in self.nodes:
                 node.printSummary()
@@ -2825,7 +2854,7 @@ class XQUAD8(XELEMENT):
         if len(LCIDs)==1:
             utmp = self.U[LCIDs[0]]
         else:
-            utmp = self.U[LCIDs[-1]]
+            utmp = self.U[-1]
         xi = 0.
         eta = 0.
         for i in range(0,int(self.nd/3)):
@@ -2879,9 +2908,16 @@ class XQUAD8(XELEMENT):
             associated with the CQUADX element.
             
         """
-        print('XQUAD8 Summary:')
-        headers = ('EID','NID 1','NID 2','NID 3','NID 4','NID 5','NID 6','NID 7','NID 8','MID')
-        print(tabulate([[self.EID]+self.NIDs+[self.MID]],headers,tablefmt="fancy_grid"))
+        print('ELEMENT {}:'.format(self.EID))
+        print('Element Type: {}'.format(self.type))
+        print('Referenced by cross-section {}'.format(self.XID))
+        print('Node IDs:')
+        headers = ('NID 1','NID 2','NID 3','NID 4','NID 5','NID 6','NID 7','NID 8')
+        print(tabulate([self.NIDs],headers,tablefmt="fancy_grid"))
+        print('Material ID: {}'.format(self.MID))
+        print('Material rotations:')
+        headers = ('Rx (deg)','Ry (deg)','Rz (deg)')
+        print(tabulate([self.th],headers,tablefmt="fancy_grid"))
         if nodes:
             for node in self.nodes:
                 node.printSummary()
@@ -3167,7 +3203,7 @@ class XQUAD9(XELEMENT):
         if len(LCIDs)==1:
             utmp = self.U[LCIDs[0]]
         else:
-            utmp = self.U[LCIDs[-1]]
+            utmp = self.U[-1]
         for i in range(0,int(self.nd/3)):
             coords += (tuple(self.nodes[i].x),)
             u_warp += (tuple(utmp[3*i:3*i+3,:].T[0]),)
@@ -3208,9 +3244,16 @@ class XQUAD9(XELEMENT):
             associated with the CQUADX element.
             
         """
-        print('XQUAD9 Summary:')
-        headers = ('EID','NID 1','NID 2','NID 3','NID 4','NID 5','NID 6','NID 7','NID 8','NID 9','MID')
-        print(tabulate([[self.EID]+self.NIDs+[self.MID]],headers,tablefmt="fancy_grid"))
+        print('ELEMENT {}:'.format(self.EID))
+        print('Element Type: {}'.format(self.type))
+        print('Referenced by cross-section {}'.format(self.XID))
+        print('Node IDs:')
+        headers = ('NID 1','NID 2','NID 3','NID 4','NID 5','NID 6','NID 7','NID 8','NID 9')
+        print(tabulate([self.NIDs],headers,tablefmt="fancy_grid"))
+        print('Material ID: {}'.format(self.MID))
+        print('Material rotations:')
+        headers = ('Rx (deg)','Ry (deg)','Rz (deg)')
+        print(tabulate([self.th],headers,tablefmt="fancy_grid"))
         if nodes:
             for node in self.nodes:
                 node.printSummary()
@@ -3429,7 +3472,7 @@ class XTRIA3(XELEMENT):
         if len(LCIDs)==1:
             utmp = self.U[LCIDs[0]]
         else:
-            utmp = self.U[LCIDs[-1]]
+            utmp = self.U[-1]
         for i in range(0,int(self.nd/3)):
             coords += (tuple(self.nodes[i].x),)
             u_warp += (tuple(utmp[3*i:3*i+3,:].T[0]),)
@@ -3458,9 +3501,16 @@ class XTRIA3(XELEMENT):
             associated with the CQUADX element.
             
         """
-        print('XTRIA3 Summary:')
-        headers = ('EID','NID 1','NID 2','NID 3','MID')
-        print(tabulate([[self.EID]+self.NIDs+[self.MID]],headers,tablefmt="fancy_grid"))
+        print('ELEMENT {}:'.format(self.EID))
+        print('Element Type: {}'.format(self.type))
+        print('Referenced by cross-section {}'.format(self.XID))
+        print('Node IDs:')
+        headers = ('NID 1','NID 2','NID 3')
+        print(tabulate([self.NIDs],headers,tablefmt="fancy_grid"))
+        print('Material ID: {}'.format(self.MID))
+        print('Material rotations:')
+        headers = ('Rx (deg)','Ry (deg)','Rz (deg)')
+        print(tabulate([self.th],headers,tablefmt="fancy_grid"))
         if nodes:
             for node in self.nodes:
                 node.printSummary()
@@ -3710,7 +3760,7 @@ class XTRIA6(XELEMENT):
         if len(LCIDs)==1:
             utmp = self.U[LCIDs[0]]
         else:
-            utmp = self.U[LCIDs[-1]]
+            utmp = self.U[-1]
         for i in range(0,int(self.nd/3)):
             coords += (tuple(self.nodes[i].x),)
             u_warp += (tuple(utmp[3*i:3*i+3,:].T[0]),)
@@ -3751,9 +3801,16 @@ class XTRIA6(XELEMENT):
             associated with the CQUADX element.
             
         """
-        print('XTRIA6 Summary:')
-        headers = ('EID','NID 1','NID 2','NID 3','NID 4','NID 5','NID 6','MID')
-        print(tabulate([[self.EID]+self.NIDs+[self.MID]],headers,tablefmt="fancy_grid"))
+        print('ELEMENT {}:'.format(self.EID))
+        print('Element Type: {}'.format(self.type))
+        print('Referenced by cross-section {}'.format(self.XID))
+        print('Node IDs:')
+        headers = ('NID 1','NID 2','NID 3','NID 4','NID 5','NID 6')
+        print(tabulate([self.NIDs],headers,tablefmt="fancy_grid"))
+        print('Material ID: {}'.format(self.MID))
+        print('Material rotations:')
+        headers = ('Rx (deg)','Ry (deg)','Rz (deg)')
+        print(tabulate([self.th],headers,tablefmt="fancy_grid"))
         if nodes:
             for node in self.nodes:
                 node.printSummary()
@@ -5557,6 +5614,7 @@ class XSect:
         x_sum = 0.
         y_sum = 0.
         for NID, node in self.nodeDict.items():
+            node.setXID(XID)
             x_sum += node.x[0]
             y_sum += node.x[1]
         xavg = x_sum/len(self.nodeDict.items())
@@ -5582,6 +5640,7 @@ class XSect:
             if node.x[1]<ymin:
                 ymin = node.x[1]
         for EID, elem in self.elemDict.items():
+            elem.setXID(XID)
             elem.initializeElement()
             elem.color = color
         self.scale = np.sqrt((xmax-xmin)**2+(ymax-ymin)**2)
@@ -5589,6 +5648,7 @@ class XSect:
         self.plotRigid()
         self.analyzed=False
         self.refAxis = np.array([0.,0.,0.])
+        self.area = 0.
         
         # Establish objects for cross-section locations
         
@@ -5706,7 +5766,7 @@ class XSect:
         - None
             
         """
-        print('Beggining cross-sectional analysis...')
+        print('\n\nBeggining cross-sectional analysis on section {}...'.format(self.XID))
         t0 = time.time()
         # Initialize the reference axis:
         ref_ax = kwargs.pop('ref_ax','shearCntr')
@@ -6053,7 +6113,10 @@ class XSect:
         if not self.analyzed and not override:
             raise ValueError('A cross-section must first be analyzed before the'
                              ' reference axis can be set.')
-        Ixx = 0.; Ixy=0.; Iyy=0;
+        Ixx=0.
+        Ixy=0.
+        Iyy=0.
+        area=0.
         nodeMap = self.nodeMap
         X = self.X
         Y = self.Y
@@ -6108,6 +6171,8 @@ class XSect:
                     Jdet, trash = elem.Jdet_inv(etas[l],xis[k])
                     #Jmat = elem._J(etas[l],xis[k])
                     #Jdet = abs(np.linalg.det(Jmat))
+                    #Compute cross-section areas
+                    area += Jdet*w_etas[l]*w_xis[k]*elem.quadFactor
                     # Add to the cross-section second mass moments of inertia
                     Ixx+=elem.rho*Jdet*w_etas[l]*w_xis[k]*elem.quadFactor*(elem.y(etas[l],xis[k])-self.refAxis[1])**2
                     Iyy+=elem.rho*Jdet*w_etas[l]*w_xis[k]*elem.quadFactor*(elem.x(etas[l],xis[k])-self.refAxis[0])**2
@@ -6167,6 +6232,7 @@ class XSect:
             # Save the strain states at all 4 corners for the element
             elem.f2sig = f2sig  
             # Save the forces applied to the beam nodes
+        self.area = area
         # Assemble cross-section mass matrix
         self.M = np.array([[m,0.,0.,0.,0.,-m*(self.x_m[1]-self.refAxis[1])],\
                            [0.,m,0.,0.,0.,m*(self.x_m[0]-self.refAxis[0])],\
@@ -6226,16 +6292,16 @@ class XSect:
         th = np.dot(np.linalg.inv(self.T2),frc)
         if stress:
             for EID, elem in self.elemDict.items():
-                if not LCID in elem.Sig.keys() or LCID==0:
-                    elem.calcStress(LCID,th)
+                #if not LCID in elem.Sig.keys() or LCID==0:
+                elem.calcStress(LCID,th)
         if strain:
             for EID, elem in self.elemDict.items() or LCID==0:
-                if not LCID in elem.Eps.keys():
-                    elem.calcStrain(LCID,th)
+                #if not LCID in elem.Eps.keys():
+                elem.calcStrain(LCID,th)
         if disp:
             for EID, elem in self.elemDict.items() or LCID==0:
-                if not LCID in elem.U.keys():
-                    elem.calcDisp(LCID,th)
+                #if not LCID in elem.U.keys():
+                elem.calcDisp(LCID,th)
         print('Finished loading cross-section {} with LCID {}'.format(self.XID,LCID))
                 
     def plotWarped(self,LCIDs,**kwargs):
@@ -6295,6 +6361,7 @@ class XSect:
         surfaces = ()
         contour_data = []
         offset = 0
+        print(LCIDs)
         for EID, elem in self.elemDict.items():
             temp_coords, temp_u_warp, temp_edges, temp_surfaces, \
                 temp_contour = elem.getGlData(LCIDs,contour=contour,offset=offset)
@@ -6366,7 +6433,7 @@ class XSect:
         
         """
         # Print xsect info:
-        print('Cross-Section: %d' %(self.XID))
+        print('CROSS-SECTION: %d' %(self.XID))
         print('Type of cross-section is: '+self.typeXSect)
         # Print the 6x6 stiffnes matrix?
         stiffMat = kwargs.pop('stiffMat',True)
@@ -6381,28 +6448,53 @@ class XSect:
         # Print reference axis?
         refAxisLoc = kwargs.pop('refAxis',True)
         
-        if refAxisLoc:
-            print('The x-coordinate of the reference axis is: %4.6f' %(self.refAxis[0]-self.xtransl))
-            print('The y-coordinate of the reference axis is: %4.6f' %(self.refAxis[1]-self.ytransl))
-        if massCntr:
-            print('The x-coordinate of the mass center is: %4.6f' %(self.x_m[0]-self.xtransl))
-            print('The y-coordinate of the mass center is: %4.6f' %(self.x_m[1]-self.ytransl))
-        if shearCntr:
-            print('The x-coordinate of the shear center is: %4.6f' %(self.xs-self.xtransl))
-            print('The y-coordinate of the shear center is: %4.6f' %(self.ys-self.ytransl))
-        if tensCntr:
-            print('The x-coordinate of the tension center is: %4.6f' %(self.xt-self.xtransl))
-            print('The y-coordinate of the tension center is: %4.6f' %(self.yt-self.ytransl))
-        if stiffMat:
-            if refAxis:
-                print('\n\nThe cross-section stiffness matrix about the reference axis is:')
-                print(tabulate(np.around(self.K,decimals=decimals),tablefmt="fancy_grid"))
-            else:
-                print('\n\nThe cross-section stiffness matrix about the xsect origin is:')
-                print(tabulate(np.around(self.K_raw,decimals=decimals),tablefmt="fancy_grid"))
-        if massMat:
-            print('\n\nThe cross-section mass matrix about the reference axis is:')
-            print(tabulate(np.around(self.M,decimals=decimals),tablefmt="fancy_grid"))
+        print('General Mesh Information:')
+        print('Section {} contains {} xnodes, with a min and max XNIDs of {} and {} respectively.'.format(self.XID,\
+              len(self.nodeDict),min(self.nodeDict.keys()),max(self.nodeDict.keys())))
+        print('Section {} contains {} xelements, with a min and max XEIDs of {} and {} respectively.'.format(self.XID,\
+              len(self.elemDict),min(self.elemDict.keys()),max(self.elemDict.keys())))
+        
+        if self.analyzed:
+            print('Cross-sectional coordinate properties:')
+            if refAxisLoc:
+                print('The x,y coordinates of the reference axis are: {}, {}\n'.format(self.refAxis[0]-self.xtransl,\
+                                                                                     self.refAxis[1]-self.ytransl))
+            if tensCntr:
+                print('The x,y coordinates of the tension center are: {}, {}\n'.format(self.xt-self.xtransl,\
+                                                                                     self.yt-self.ytransl))
+            if shearCntr:
+                print('The x,y coordinates of the shear center are: {}, {}\n'.format(self.xs-self.xtransl,\
+                                                                                     self.ys-self.ytransl))
+            if massCntr:
+                print('The x,y coordinates of the mass center are: {}, {}\n'.format(self.x_m[0]-self.xtransl,\
+                                                                                     self.x_m[1]-self.ytransl))
+            if stiffMat:
+                print('Cross-section stiffness parameters:')
+                if refAxis:
+                    print('X-direction shear stiffness (GAKx):   {:.4e}'.format(self.K[0,0]))
+                    print('Y-direction shear stiffness (GAKy):   {:.4e}'.format(self.K[1,1]))
+                    print('Z-direction axial stiffness (EA):     {:.4e}'.format(self.K[2,2]))
+                    print('X-direction bending stiffness (EIxx): {:.4e}'.format(self.K[3,3]))
+                    print('Y-direction bending stiffness (EIyy): {:.4e}'.format(self.K[4,4]))
+                    print('Z-direction torsional stiffness (GJ): {:.4e}'.format(self.K[5,5]))
+                    print('Cross-sectional area (A):             {:.4e}'.format(self.area))
+                    print('\n\nThe full cross-section stiffness matrix about the reference axis is:')
+                    print(tabulate(np.around(self.K,decimals=decimals),tablefmt="fancy_grid"))
+                else:
+                    print('X-direction shear stiffness (GAKx):   {}'.format(self.K_raw[0,0]))
+                    print('Y-direction shear stiffness (GAKy):   {}'.format(self.K_raw[1,1]))
+                    print('Z-direction axial stiffness (EA):     {}'.format(self.K_raw[2,2]))
+                    print('X-direction bending stiffness (EIxx): {}'.format(self.K_raw[3,3]))
+                    print('Y-direction bending stiffness (EIyy): {}'.format(self.K_raw[4,4]))
+                    print('Z-direction torsional stiffness (GJ): {}'.format(self.K_raw[5,5]))
+                    print('Cross-sectional area (A):             {}'.format(self.area))
+                    print('\n\nThe cross-section stiffness matrix about the xsect origin is:')
+                    print(tabulate(np.around(self.K_raw,decimals=decimals),tablefmt="fancy_grid"))
+            if massMat:
+                print('\n\nThe cross-section mass matrix about the reference axis is:')
+                print(tabulate(np.around(self.M,decimals=decimals),tablefmt="fancy_grid"))
+        else:
+            print('To print the cross-section properties, the section must be analyzed first.')
     def writeToFile(self,LSID):
         """Writes the object to a csv file.
         

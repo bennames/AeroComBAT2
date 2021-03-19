@@ -826,6 +826,7 @@ class Model:
         f.close()
         print('Completed exporting cross-section:')
     def updateSectionRefAx(self):
+        print('Updating the cross-section reference axis...')
         if self.activeSection:
             tmpXSect = self.activeSection
             if not tmpXSect.analyzed:
@@ -850,6 +851,7 @@ class Model:
                     ref_ax = 'shearCntr'
                 if not (ref_ax_str == 'Custom Axis' and (self.xref=='' or self.yref=='')):
                     tmpXSect.setReferenceAxis(ref_ax)
+                print('Finished updating the cross-section reference axis!')
         else:
             print('No active cross-section.')
     def setFx(self,sb):
@@ -1068,7 +1070,8 @@ class Model:
                          self.xsectMy,self.xsectMz]
                     tmpXSect.calcWarpEffects(0,F)
                     LCIDs = [0]
-                elif self.GUI.load_source_drop.currentText()=='Load ID':
+                elif self.GUI.load_source_drop.currentText()=='Load ID' and \
+                    not self.GUI.load_source_vals.currentText()=='':
                     F = [self.xsectFx,self.xsectFy,self.xsectFz,self.xsectMx,\
                          self.xsectMy,self.xsectMz]
                     LCID = int(self.GUI.load_source_vals.currentText())
@@ -1082,7 +1085,7 @@ class Model:
                         F = [newLoads[0,0],newLoads[1,0],newLoads[2,0],newLoads[3,0],\
                              newLoads[4,0],newLoads[5,0]]
                         tmpXSect.calcWarpEffects(LCID,F)
-                elif self.GUI.load_source_drop.currentText()=='LSID':
+                elif self.GUI.load_source_drop.currentText()=='Set':
                     #Get the intersection of LCIDs in the set and added to the section
                     LSID = int(self.GUI.load_source_vals.currentText())
                     setLCIDs = self.sectionLSIDs[LSID]

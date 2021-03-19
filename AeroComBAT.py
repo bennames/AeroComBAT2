@@ -296,7 +296,7 @@ class GUI:
         xref_field.textChanged.connect(self.Model.setXref)
         self.xref_field = xref_field
         # Button to set custom y_ref
-        yref_label = QtGui.QLabel("yref")
+        yref_label = QtGui.QLabel("y_ref")
         yref_field = QtGui.QLineEdit()
         yref_field.setValidator(QtGui.QDoubleValidator())
         yref_field.textChanged.connect(self.Model.setYref)
@@ -1124,25 +1124,29 @@ class printPopup(DockArea):
             Library = self.Model.sections
         else:
             print('Please select a valid library')
-        ID = int(self.widgets[0].text())
-        if ID not in Library.getIDs():
-            print('This ID {} does not exist within the models {}...'.format(ID,Library.type))
-        else:
-            if Library.type == 'MaterialLibrary':
-                entity = Library.get(ID)
-            elif Library.type == 'XNodeLibrary':
-                entity = Library.get(ID)
-            elif Library.type == 'NodeLibrary':
-                entity = Library.get(ID)
-            elif Library.type == 'XElemLibrary':
-                entity = Library.get(ID)
-            elif Library.type == 'BeamElementLibrary':
-                entity = Library.get(ID)
-            elif Library.type == 'LaminateLibrary':
-                entity = Library.get(ID)
-            elif Library.type == 'CrossSectionLibrary':
-                entity = Library.get(ID)
-            entity.printSummary()
+        try:
+            ID = int(self.widgets[0].text())
+            if ID not in Library.getIDs():
+                print('This ID {} does not exist within the models {}...'.format(ID,Library.type))
+            else:
+                if Library.type == 'MaterialLibrary':
+                    entity = Library.get(ID)
+                elif Library.type == 'XNodeLibrary':
+                    entity = Library.get(ID)
+                elif Library.type == 'NodeLibrary':
+                    entity = Library.get(ID)
+                elif Library.type == 'XElemLibrary':
+                    entity = Library.get(ID)
+                elif Library.type == 'BeamElementLibrary':
+                    entity = Library.get(ID)
+                elif Library.type == 'LaminateLibrary':
+                    entity = Library.get(ID)
+                elif Library.type == 'CrossSectionLibrary':
+                    entity = Library.get(ID)
+                entity.printSummary()
+        except:
+            print('Please enter a valid entity ID...')
+        
             
 class selectCrossSectionPopup(DockArea):
     def __init__(self,Model):
