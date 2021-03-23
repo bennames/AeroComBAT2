@@ -6361,7 +6361,6 @@ class XSect:
         surfaces = ()
         contour_data = []
         offset = 0
-        print(LCIDs)
         for EID, elem in self.elemDict.items():
             temp_coords, temp_u_warp, temp_edges, temp_surfaces, \
                 temp_contour = elem.getGlData(LCIDs,contour=contour,offset=offset)
