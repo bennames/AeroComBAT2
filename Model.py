@@ -444,29 +444,31 @@ class Model:
                 f.write('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n')
                 f.write('$$$$$$$$$$$$$           AEROCOMBAT INPUT FILE           $$$$$$$$$$$$\n')
                 f.write('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n')
+                tmp_xdir = xdir
+                tmp_ydir = ydir
                 # Write Node Objects
-                if xdir<0:
+                if tmp_xdir<0:
                     xfactor=-1
-                    xdir=abs(xdir)-1
+                    tmp_xdir=abs(tmp_xdir)-1
                 else:
                     xfactor=1
-                    xdir -= 1
-                if ydir<0:
+                    tmp_xdir -= 1
+                if tmp_ydir<0:
                     yfactor=-1
-                    ydir=abs(ydir)-1
+                    tmp_ydir=abs(tmp_ydir)-1
                 else:
                     yfactor=1
-                    ydir -= 1
+                    tmp_ydir -= 1
                 for NID, node in model.nodes.items():
                     node_pos = node.get_position()
-                    f.write('XNODE,{},{},{}\n'.format(NID,node_pos[xdir]*xfactor,node_pos[ydir]*yfactor))
+                    f.write('XNODE,{},{},{}\n'.format(NID,node_pos[tmp_xdir]*xfactor,node_pos[tmp_ydir]*yfactor))
                 # Write Material Objects
                 for MID, mat in model.materials.items():
                     if mat.type=='MAT1':
-                        if MID in self.materials.getIDs():
-                            aeroMID = max(self.materials.getIDs())+1
-                        else:
-                            aeroMID = MID
+                        # if MID in self.materials.getIDs():
+                        #     aeroMID = max(self.materials.getIDs())+1
+                        # else:
+                        aeroMID = MID
                         name = mat.comment[mat.comment.find('Material')+len('Material'):].replace('\n','')
                         aeroE = mat.E()
                         aeronu = mat.nu
