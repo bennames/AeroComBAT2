@@ -6073,8 +6073,8 @@ class XSect:
         # Store the stiffness matrix taken about the xsect origin
         self.K_raw = np.linalg.inv(F)
         # Calculate the tension center
-        self.xt = (-F[3,3]*F[4,2]+F[3,4]*F[3,2])/(F[3,3]*F[4,4]-F[3,4]**2)
-        self.yt = (-F[3,2]*F[4,4]+F[3,4]*F[4,2])/(F[3,3]*F[4,4]-F[3,4]**2)
+        self.xt = (-F[2,3]*F[3,4]+F[3,3]*F[2,4])/(F[3,3]*F[4,4]-F[3,4]**2)
+        self.yt = (-F[2,3]*F[4,4]+F[3,4]*F[2,4])/(F[3,3]*F[4,4]-F[3,4]**2)
         # Calculate axis about which bedning is decoupled
         if np.abs(self.K_raw[3,4])<0.1:
             self.bendAxes = np.array([[1.,0.,0.,],[0.,1.,0.]])
