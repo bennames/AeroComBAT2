@@ -11,8 +11,12 @@ setup(
     install_requires=[
         'numpy',
         'scipy',
-        'pyopengl'
-        'pyqtgraph'],
+        'pyopengl',
+        'pyqtgraph',
+        'pynastran',
+        'matplotlib',
+        'pyside6',
+        'numba',],
     classifiers=[
     'Development Status  3 - Alpha',
 

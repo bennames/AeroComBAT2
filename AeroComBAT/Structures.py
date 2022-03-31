@@ -3,9 +3,9 @@ import operator
 import matplotlib as mpl
 import pyqtgraph as pg
 
-from tabulate import tabulate
-from Utils import *
-from Visualizer import VisualModel
+from .tabulate import tabulate
+from .Utils import *
+from .Visualizer import VisualModel
 
 from scipy.sparse import csr_matrix, vstack, hstack, lil_matrix, eye, csc_matrix, coo_matrix
 from scipy.sparse.linalg import minres, spsolve, inv#, dsolve, bicg, bicgstab, cg, cgs, gmres, lgmres, minres, qmr, gcrotmk

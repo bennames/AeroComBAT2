@@ -59,6 +59,14 @@ be installed:
 
    pip install pynastran
 
+Other dependencies necessary to run AeroComBAT are:
+
+.. code-block:: python
+
+   pip install matplotlib
+   pip install pyside6
+   pip install numba
+   
 Finally, in order to install AeromComBAT, download the zip file from GitHub.
 Once downloaded, unzip the package and navigate to the folder where you
 downloaded AeroComBAT using the command prompt tool for windows or terminal for
@@ -66,6 +74,6 @@ Mac. Once in the root AeroComBAT folder, run:
 
 .. code-block:: python
 
-   python setup.py install
+   pip install .
 
 AeroComBAT should now be installed!
