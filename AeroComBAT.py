@@ -6,7 +6,7 @@ import copy
 import numpy as np
 from pyqtgraph.dockarea import *
 import sys
-from .Model import Model
+from AeroComBAT.Model import Model
 import time
 import ast
 
