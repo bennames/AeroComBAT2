@@ -1580,17 +1580,6 @@ class XELEMENT:
         self.f2sig = None
         # Rotate the materials compliance matrix as necessary:
         Selem = transformCompl(np.copy(material.Smat),th,xsect=True)
-        self.Selem = Selem
-        Selem_2 = transformCompl_2(np.copy(material.Smat),th,xsect=True)
-        self.Selem_2 = Selem_2
-        Selem_mech_kit = transformCompl_mech_kit(np.copy(material.Smat),th,xsect=True)
-        self.Selem_mech_kit = Selem_mech_kit
-        Selem_simpy = transformCompl_sympy(np.copy(material.Smat), th, xsect=True)
-        self.Selem_simpy = Selem_simpy
-        Selem_once = transformCompliance(np.copy(material.Smat), th, xsect=True)
-        self.Selem_once = Selem_once
-        Selem_other_rot = trans_other_rot(np.copy(material.Smat), th)
-        self.Selem_other_rot = Selem_other_rot
         # Reorder Selem for cross-sectional analysis:
         # Initialize empty compliance matrix
         Sxsect = np.zeros((6,6))
@@ -1598,7 +1587,7 @@ class XELEMENT:
         shuff = [0,1,5,4,3,2]
         for i in range(0,6):
             for j in range(0,6):
-                Sxsect[shuff[i],shuff[j]] = Selem_2[i,j]
+                Sxsect[shuff[i],shuff[j]] = Selem[i,j]
         # Store the re-ordered material stiffness matrix:
         self.Q = np.linalg.inv(Sxsect)
 
