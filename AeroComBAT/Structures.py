@@ -1483,10 +1483,10 @@ class XELEMENT:
         self.th = th
         self.XID = None
 
-        Rxsectsiginv, Rxsectepsinv = genCompRy(90)
-        Rxsiginv, Rxepsinv = genCompRx(-th[0])
-        Rysiginv, Ryepsinv = genCompRy(-th[1])
-        Rzsiginv, Rzepsinv = genCompRz(-th[2])
+        Rxsectsiginv, Rxsectepsinv = stress_strain_rot(axis = 'y', angle_deg = 90.0)
+        Rxsiginv, Rxepsinv = stress_strain_rot(axis = 'x', angle_deg = -th[0])
+        Rysiginv, Ryepsinv = stress_strain_rot(axis = 'y', angle_deg = -th[1])
+        Rzsiginv, Rzepsinv = stress_strain_rot(axis = 'z', angle_deg = -th[2])
         self.Rsiginv = np.dot(Rxsectsiginv,np.dot(Rxsiginv,np.dot(Rysiginv,Rzsiginv)))
         self.Repsinv = np.dot(Rxsectepsinv,np.dot(Rxepsinv,np.dot(Ryepsinv,Rzepsinv)))
 
