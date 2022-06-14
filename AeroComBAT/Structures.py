@@ -6174,10 +6174,10 @@ class XSect:
                     #Compute cross-section areas
                     area += Jdet*w_etas[l]*w_xis[k]*elem.quadFactor
                     # Add to the cross-section second mass moments of inertia
-                    Ixx+=elem.rho*Jdet*w_etas[l]*w_xis[k]*elem.quadFactor*(elem.y(etas[l],xis[k])-self.refAxis[1])**2
-                    Iyy+=elem.rho*Jdet*w_etas[l]*w_xis[k]*elem.quadFactor*(elem.x(etas[l],xis[k])-self.refAxis[0])**2
-                    Ixy+=elem.rho*Jdet*w_etas[l]*w_xis[k]*elem.quadFactor*(elem.y(etas[l],xis[k])-\
-                                                                           self.refAxis[1])*(elem.x(etas[l],xis[k])-self.refAxis[0])
+                    common_factor = elem.rho*Jdet*w_etas[l]*w_xis[k]*elem.quadFactor
+                    Ixx+= common_factor * (elem.y(etas[l],xis[k])-self.refAxis[1])**2
+                    Iyy+= common_factor * (elem.x(etas[l],xis[k])-self.refAxis[0])**2
+                    Ixy+= common_factor * (elem.y(etas[l],xis[k])-self.refAxis[1])*(elem.x(etas[l],xis[k])-self.refAxis[0])
             # Initialize the element warping vector for strain calc
             Xelem = np.zeros((nd,6))
             # Initialize the element warping grad vector for strain calc
