@@ -6,7 +6,7 @@ import copy
 import numpy as np
 from pyqtgraph.dockarea import *
 import sys
-from Model import Model
+from AeroComBAT.Model import Model
 import time
 import ast
 
@@ -14,18 +14,18 @@ Gradients = OrderedDict([
     ('standard', {'ticks': [(0, (255, 255, 255, 255)),
                             (0.2, (0, 0, 255, 255)),
                             (0.4, (0, 255, 255, 255)),
-                            (0.6, (0, 255, 0, 255)), 
-                            (0.8, (255, 255, 0, 255)), 
+                            (0.6, (0, 255, 0, 255)),
+                            (0.8, (255, 255, 0, 255)),
                             (1, (255, 0, 0, 255))], 'mode': 'rgb'}),
 ])
-    
+
 class GUI:
     def __init__(self):
         self.Model = Model()
         self.Model.GUI = self
         self.printWindow = None
         self.sectionSelectionWindow = None
-        
+
         #######################################################################
         # CREATE THE GUI
         #######################################################################
@@ -40,7 +40,7 @@ class GUI:
         icon = QtGui.QIcon("AeroComBAT.jpg")
         win.setWindowIcon(icon)
         app.setWindowIcon(icon)
-        
+
         #############
         # MENU SETUP
         ############
@@ -60,57 +60,57 @@ class GUI:
         #Add quit functionality
         quitEntity = QtGui.QAction("&Quit",win)
         quitEntity.triggered.connect(self.AeroQuit)
-        
+
         #CREATE OBJECTS
         createMaterial = QtGui.QAction("&Material",win)
         createMaterial.triggered.connect(self.createMaterial)
         #Create Laminate
         createLaminate = QtGui.QAction("&Laminate",win)
         createLaminate.triggered.connect(self.createLaminate)
-        
+
         #SECTION ANALYSIS
         selectSections = QtGui.QAction("&Select Section",win)
         selectSections.triggered.connect(self.selectSection)
-        
+
         viewCSYS = QtGui.QAction("&CSYS",win)
         viewCSYS.triggered.connect(self.showCSYS)
         viewCSYS.setStatusTip('View material coordinate systems')
-        
+
         viewNormals = QtGui.QAction("&Element Normals",win)
         viewNormals.triggered.connect(self.showNormals)
         viewNormals.setStatusTip('View element normals')
-        
+
         viewRefAxis = QtGui.QAction("&Reference Axis",win)
         viewRefAxis.triggered.connect(self.showRefAxis)
         viewRefAxis.setStatusTip('View the reference axis of the cross-section')
-        
+
         viewShearCenter = QtGui.QAction("&Shear Center",win)
         viewShearCenter.triggered.connect(self.showShearCenter)
         viewShearCenter.setStatusTip('View the shear center of the cross-section')
-        
+
         viewTensionCenter = QtGui.QAction("&Tension Center",win)
         viewTensionCenter.triggered.connect(self.showTensionCenter)
         viewTensionCenter.setStatusTip('View the tension center of the cross-section')
-        
+
         viewMassCenter = QtGui.QAction("&Mass Center",win)
         viewMassCenter.triggered.connect(self.showMassCenter)
         viewMassCenter.setStatusTip('View the mass center of the cross-section')
-        
+
         translateSectionsAct = QtGui.QAction("&Translate Sections",win)
         translateSectionsAct.triggered.connect(self.translateSections)
-        
+
         analyzeSectionsAct = QtGui.QAction("&Analyze Sections",win)
         analyzeSectionsAct.triggered.connect(self.analyzeSections)
-        
+
         exportSectionsAct = QtGui.QAction("&Export Sections Stiffness",win)
         exportSectionsAct.triggered.connect(self.exportSectionsStiffness)
-        
+
         exportSectionsNeu = QtGui.QAction("&Export Sections FEMAP Neutral",win)
         exportSectionsNeu.triggered.connect(self.exportSectionsNeutral)
-        
+
         exportSectionsCrit = QtGui.QAction("&Export Sections Criteria",win)
         exportSectionsCrit.triggered.connect(self.exportSectionsCriteria)
-        
+
         mainMenu = win.menuBar()
         fileMenu = mainMenu.addMenu('&File')
         fileMenu.addAction(printEntity)
@@ -118,11 +118,11 @@ class GUI:
         fileMenu.addAction(loadNASTFile)
         fileMenu.addAction(loadCSVFile)
         fileMenu.addAction(quitEntity)
-        
+
         createMenu = mainMenu.addMenu('&Create')
         createMenu.addAction(createMaterial)
         createMenu.addAction(createLaminate)
-        
+
         sectionMenu = mainMenu.addMenu('&Cross-Section')
         sectionMenu.addAction(selectSections)
         viewMenu = sectionMenu.addMenu('&View')
@@ -137,11 +137,11 @@ class GUI:
         sectionMenu.addAction(exportSectionsAct)
         sectionMenu.addAction(exportSectionsNeu)
         sectionMenu.addAction(exportSectionsCrit)
-        
+
         self.pop = None
 
         #fileMenu.addAction(extractAction)
-        
+
         # Create dock 1 for visualizing the global model
         d1 = Dock("Global Model", size=(900,900))
         # Create dock 2 for visualizing the cross-section model
@@ -149,7 +149,7 @@ class GUI:
         # Add dock 1 above dock 2
         area.addDock(d1, 'left')
         area.addDock(d2, 'above', d1)
-        
+
         ##############
         # MISCELLANEOUS
         ##############
@@ -159,7 +159,7 @@ class GUI:
         sectionComboBox2.activated.connect(self.Model.plotRigidXSect)
         sectionComboBox2.addItem('')
         self.xsectDropDown = sectionComboBox2
-        
+
         ##############
         # DOCK 1 SETUP - GLOBAL MODEL VIEW
         ##############
@@ -202,18 +202,18 @@ class GUI:
         colorBarLayout1.addItem(gw1)
         colorBarLayout1.setMaximumSize(QtCore.QSize(100, 800))
         openglWindow1.setSizePolicy(colorBarLayout1.sizePolicy())
-        
+
         #Create Update Button
         globalViewUpdate = QtGui.QPushButton('Redraw Model')
         globalViewUpdate.clicked.connect(self.redrawGlobal)
-        
+
         # Add the color bar and opengl widgets to the window (dock 1)
         w1.addWidget(openglWindow1, row=0, col=0)
         w1.addWidget(colorBarLayout1, row=0, col=1)
         w1.addWidget(w1_global,row=1,col=0)
         w1_global.addWidget(globalViewUpdate,row=0,col=0)
         d1.addWidget(w1)
-        
+
         ##############
         # DOCK 2 SETUP - CROSS-SECTION MODEL VIEW
         ##############
@@ -227,8 +227,8 @@ class GUI:
         sectionLoading.setMaximumSize(QtCore.QSize(1000, 400))
         sectionArea.addDock(sectionLoading,position='left')
         sectionArea.addDock(sectionAnalysis,'above',sectionLoading)
-        
-        
+
+
         # Create the opengl widget for the cross-section
         openglWindow2 = gl.GLViewWidget()
         # Set the background color of the window to white
@@ -264,18 +264,18 @@ class GUI:
         colorBarLayout2.addItem(gw2)
         colorBarLayout2.setMaximumSize(QtCore.QSize(100, 800))
         openglWindow2.setSizePolicy(colorBarLayout2.sizePolicy())
-        
+
         #Create a label for the active cross-section
         comboBox2Label = QtGui.QLabel('Cross-section:  ')
         comboBox2Label.setAlignment(QtCore.Qt.AlignLeft)
         self.sectionLabel = comboBox2Label
-        
+
         w2.addWidget(openglWindow2, row=0, col=0)
         w2.addWidget(colorBarLayout2, row=0, col=1)
         w2.addWidget(comboBox2Label, row=1, col=0,colspan=2)
         w2.addWidget(sectionArea, row=2, col=0,colspan=2)
         d2.addWidget(w2)
-        
+
         ##############
         # CROSS-SECTION ANALYSIS VIEW
         ##############
@@ -325,13 +325,13 @@ class GUI:
         xsect_analysis_layout.addWidget(tol_field, row=2, col=3)
         xsect_analysis_layout.addWidget(analyzeSectionButton, row=3, col=0)
         sectionAnalysis.addWidget(xsect_analysis_layout)
-        
+
         ##############
         # CROSS-SECTION LOADING VIEW
         ##############
         # Create a layout widget for cross-section analysis
         xsect_loading_layout = pg.LayoutWidget()
-        
+
         #Determine the source for applied loads
         load_source_label = QtGui.QLabel("Loading Source:")
         load_source_drop = QtGui.QComboBox()
@@ -344,7 +344,7 @@ class GUI:
         load_source_vals = QtGui.QComboBox()
         load_source_vals.activated.connect(self.updateLoadFields)
         self.load_source_vals = load_source_vals
-        
+
         # Create 6 Text Edit Fields and labels for loads
         # FX:
         fx_label = QtGui.QLabel("Fx (Shear)")
@@ -460,8 +460,8 @@ class GUI:
         xsect_loading_layout.addWidget(warpFactor_field, row=5, col=1)
         xsect_loading_layout.addWidget(calcWarpButton, row=6, col=0)
         sectionLoading.addWidget(xsect_loading_layout)
-        
-        
+
+
         # Display GUI
         win.show()
         if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
@@ -509,15 +509,15 @@ class GUI:
             self.loadFields[4].setText(str(newLoads[4,0]))
             self.loadFields[5].setText(str(newLoads[5,0]))
             #Transform load to the reference axis
-            
+
     def updateColorBar(self):
         xmin = self.Model.xsectColorScale[0]
         xmax = self.Model.xsectColorScale[1]
         self.xsectColorRange.setRange(xmin, xmax)
-        
+
     def quitVis(self):
         QtCore.QCoreApplication.instance().quit()
-        
+
     def createMaterial(self):
         material_popup = MaterialPopUpMenu()
         material_popup.Model = self.Model
@@ -613,7 +613,7 @@ class GUI:
             csvPopup.Model = self.Model
     def AeroQuit(self):
         self.app.quit()
-            
+
 class MaterialPopUpMenu(DockArea):
     def __init__(self):
         DockArea.__init__(self)
@@ -630,7 +630,7 @@ class MaterialPopUpMenu(DockArea):
         self.addDock(d1, 'top')
         self.addDock(d2, position='below', relativeTo=d1)
         self.addDock(d3, position='below', relativeTo=d2)
-        
+
         ######################################################################
         ############### ISOTROPIC MATERIAL LAYOUT ############################
         ######################################################################
@@ -674,7 +674,7 @@ class MaterialPopUpMenu(DockArea):
         iso_button = QtGui.QPushButton('Create Material')
         iso_button.clicked.connect(self.pressedIso)
         self.widgets1 += [iso_button]
-        
+
         iso_mat_layout.addWidget(iso_mat_name_label,row=0,col=0)
         iso_mat_layout.addWidget(iso_mat_name,row=1,col=0)
         iso_mat_layout.addWidget(iso_mat_id_label,row=0,col=1)
@@ -688,9 +688,9 @@ class MaterialPopUpMenu(DockArea):
         iso_mat_layout.addWidget(iso_mat_nu_label,row=2,col=1)
         iso_mat_layout.addWidget(iso_mat_nu,row=3,col=1)
         iso_mat_layout.addWidget(iso_button,row=4,col=0)
-        
+
         d1.addWidget(iso_mat_layout)
-        
+
         ######################################################################
         ########## TRASVERSELY ISOTROPIC MATERIAL LAYOUT #####################
         ######################################################################
@@ -752,7 +752,7 @@ class MaterialPopUpMenu(DockArea):
         tiso_button = QtGui.QPushButton('Create Material')
         tiso_button.clicked.connect(self.pressedTiso)
         self.widgets2 += [tiso_button]
-        
+
         tiso_mat_layout.addWidget(tiso_mat_name_label,row=0,col=0)
         tiso_mat_layout.addWidget(tiso_mat_name,row=1,col=0)
         tiso_mat_layout.addWidget(tiso_mat_id_label,row=0,col=1)
@@ -772,9 +772,9 @@ class MaterialPopUpMenu(DockArea):
         tiso_mat_layout.addWidget(tiso_mat_G12_label,row=2,col=4)
         tiso_mat_layout.addWidget(tiso_mat_G12,row=3,col=4)
         tiso_mat_layout.addWidget(tiso_button,row=4,col=0)
-        
+
         d2.addWidget(tiso_mat_layout)
-        
+
         ######################################################################
         ################## ORTHOTROPIC MATERIAL LAYOUT #######################
         ######################################################################
@@ -860,7 +860,7 @@ class MaterialPopUpMenu(DockArea):
         ortho_button = QtGui.QPushButton('Create Material')
         ortho_button.clicked.connect(self.pressedOrtho)
         self.widgets3 += [ortho_button]
-        
+
         ortho_mat_layout.addWidget(ortho_mat_name_label,row=0,col=0)
         ortho_mat_layout.addWidget(ortho_mat_name,row=1,col=0)
         ortho_mat_layout.addWidget(ortho_mat_id_label,row=0,col=1)
@@ -888,11 +888,11 @@ class MaterialPopUpMenu(DockArea):
         ortho_mat_layout.addWidget(ortho_mat_nu12_label,row=6,col=2)
         ortho_mat_layout.addWidget(ortho_mat_nu12,row=7,col=2)
         ortho_mat_layout.addWidget(ortho_button,row=8,col=0)
-        
+
         d3.addWidget(ortho_mat_layout)
-        
+
         self.show()
-        
+
     def pressedIso(self):
         print('')
         mat_name_field = self.widgets1[0]
@@ -934,7 +934,7 @@ class MaterialPopUpMenu(DockArea):
                 mat_constants,mat_t)
             print('Successfully created isotropic material!')
             self.destroy()
-            
+
     def pressedTiso(self):
         print('')
         mat_name_field = self.widgets2[0]
@@ -991,7 +991,7 @@ class MaterialPopUpMenu(DockArea):
                 mat_constants,mat_t)
             print('Successfully created transversely isotropic material!')
             self.destroy()
-    
+
     def pressedOrtho(self):
         print('')
         mat_name_field = self.widgets3[0]
@@ -1068,7 +1068,7 @@ class MaterialPopUpMenu(DockArea):
                 mat_constants,mat_t)
             print('Successfully created orthotropic material!')
             self.destroy()
-            
+
 class printPopup(DockArea):
     def __init__(self,Model):
         DockArea.__init__(self)
@@ -1082,29 +1082,29 @@ class printPopup(DockArea):
         tmp_id = QtGui.QLineEdit()
         tmp_id.setValidator(QtGui.QIntValidator())
         self.widgets += [tmp_id]
-        
+
         # Create radio button for entities
         entity_selection = QtGui.QComboBox()
         entity_selection.addItems(['XNode','XElement','Node','Beam Element',\
                                    'Material','Laminate','Cross-Section'])
         self.widgets += [entity_selection]
-        
+
         # Create Iso Material Button
         button = QtGui.QPushButton('Print Entity')
         button.clicked.connect(self.pressed)
         self.widgets += [button]
-        
+
         # Set GUI Window
         print_layout = pg.LayoutWidget()
         print_layout.addWidget(id_label,row=0,col=0)
         print_layout.addWidget(tmp_id,row=0,col=1)
         print_layout.addWidget(entity_selection,row=1,col=0)
         print_layout.addWidget(button,row=1,col=1)
-        
+
         d1.addWidget(print_layout)
-        
+
         self.show()
-    
+
     def pressed(self):
         print('')
         cb = self.widgets[1]
@@ -1146,8 +1146,8 @@ class printPopup(DockArea):
                 entity.printSummary()
         except:
             print('Please enter a valid entity ID...')
-        
-            
+
+
 class selectCrossSectionPopup(DockArea):
     def __init__(self,Model):
         DockArea.__init__(self)
@@ -1160,14 +1160,14 @@ class selectCrossSectionPopup(DockArea):
         # Material ID
         id_label = QtGui.QLabel()
         id_label.setText('Cross-Section ID')
-        
+
         # Set GUI Window
         section_select_layout = pg.LayoutWidget()
         section_select_layout.addWidget(id_label,row=0,col=0)
         section_select_layout.addWidget(self.Model.GUI.xsectDropDown,row=0,col=1)
-        
+
         d1.addWidget(section_select_layout)
-        
+
         self.show()
     def pop(self):
         self.window = Pop()
@@ -1178,7 +1178,7 @@ class LaminatePopup(DockArea):
         d1 = Dock("Laminate Editor", size=(500,800))
         self.widgets = []
         self.addDock(d1, 'top')
-        
+
         lam_layout = pg.LayoutWidget()
         #Laminate ID Field
         lam_label = QtGui.QLabel('Laminate ID:')
@@ -1209,7 +1209,7 @@ class LaminatePopup(DockArea):
         create_lam = QtGui.QPushButton('Create Laminate')
         create_lam.clicked.connect(self.pressed)
         self.widgets += [create_lam]
-        
+
         lam_layout.addWidget(lam_label,row=0,col=0)
         lam_layout.addWidget(lam_id,row=0,col=1)
         lam_layout.addWidget(Ni_label,row=1,col=0)
@@ -1221,15 +1221,15 @@ class LaminatePopup(DockArea):
         lam_layout.addWidget(sym_label,row=4,col=0)
         lam_layout.addWidget(sym_box,row=4,col=1)
         lam_layout.addWidget(create_lam,row=5,col=0)
-        
+
         d1.addWidget(lam_layout)
-        
+
         self.resize(500,150)
-        
+
         self.show()
-    
+
     def pressed(self):
-        
+
         try:
             n_i = ast.literal_eval(self.widgets[1].text())
             m_i = ast.literal_eval(self.widgets[2].text())
@@ -1261,23 +1261,23 @@ class LaminatePopup(DockArea):
             #self.Model.lists[MiLSID] = m_i
             #THiLSID = MiLSID + 1
             #self.Model.lists[THiLSID] = th_i
-            
+
             self.Model.laminates.addLaminate(LAMID,n_i,m_i,self.Model.materials,th=th_i,sym=sym)
-            
+
             laminate = self.Model.laminates.getLaminate(LAMID)
             laminate.NiLSID = n_i
             laminate.MiLSID = m_i
             laminate.THiLSID = th_i
             self.destroy()
-            
-            
+
+
 class BulkSectionAnalysis(DockArea):
     def __init__(self):
         DockArea.__init__(self)
         d1 = Dock("Bulk Cross-Section Analysis", size=(500,800))
         self.widgets = []
         self.addDock(d1, 'top')
-        
+
         analysis_layout = pg.LayoutWidget()
         # Select Which Sections to Analyze
         sections_label = QtGui.QLabel('Cross-Section IDs:')
@@ -1287,19 +1287,19 @@ class BulkSectionAnalysis(DockArea):
         analyze_sections_button = QtGui.QPushButton('Analyze Sections')
         analyze_sections_button.clicked.connect(self.pressed)
         self.widgets += [analyze_sections_button]
-        
+
         analysis_layout.addWidget(sections_label,row=0,col=0)
         analysis_layout.addWidget(section_ids,row=0,col=1)
         analysis_layout.addWidget(analyze_sections_button,row=1,col=0)
-        
+
         d1.addWidget(analysis_layout)
-        
+
         self.resize(500,150)
-        
+
         self.show()
-    
+
     def pressed(self):
-        
+
         #try:
         section_ids = ast.literal_eval(self.widgets[0].text())
         proceed=True
@@ -1323,7 +1323,7 @@ class BulkSectionTranslate(DockArea):
         d1 = Dock("Bulk Cross-Section Translate", size=(500,800))
         self.widgets = []
         self.addDock(d1, 'top')
-        
+
         translate_layout = pg.LayoutWidget()
         # Select Which Sections to Analyze
         sections_label = QtGui.QLabel('Cross-Section IDs:')
@@ -1341,7 +1341,7 @@ class BulkSectionTranslate(DockArea):
         analyze_sections_button = QtGui.QPushButton('Translate Sections')
         analyze_sections_button.clicked.connect(self.pressed)
         self.widgets += [analyze_sections_button]
-        
+
         translate_layout.addWidget(sections_label,row=0,col=0)
         translate_layout.addWidget(section_ids,row=0,col=1)
         translate_layout.addWidget(x_label,row=1,col=0)
@@ -1349,15 +1349,15 @@ class BulkSectionTranslate(DockArea):
         translate_layout.addWidget(y_label,row=2,col=0)
         translate_layout.addWidget(y_value_field,row=2,col=1)
         translate_layout.addWidget(analyze_sections_button,row=3,col=0)
-        
+
         d1.addWidget(translate_layout)
-        
+
         self.resize(500,150)
-        
+
         self.show()
-    
+
     def pressed(self):
-        
+
         #try:
         section_ids = ast.literal_eval(self.widgets[0].text())
         proceed=True
@@ -1387,7 +1387,7 @@ class ExportSectionsStiffness(DockArea):
         d1 = Dock("Export Cross-Sections Stiffness Matricies", size=(500,800))
         self.widgets = []
         self.addDock(d1, 'top')
-        
+
         export_layout = pg.LayoutWidget()
         # Select Which Sections to Export
         sections_label = QtGui.QLabel('Cross-Section IDs:')
@@ -1404,7 +1404,7 @@ class ExportSectionsStiffness(DockArea):
         analyze_sections_button = QtGui.QPushButton('Export Sections Stiffness')
         analyze_sections_button.clicked.connect(self.pressed)
         self.widgets += [analyze_sections_button]
-        
+
         export_layout.addWidget(sections_label,row=0,col=0)
         export_layout.addWidget(section_ids,row=0,col=1)
         export_layout.addWidget(filename_label,row=1,col=0)
@@ -1412,15 +1412,15 @@ class ExportSectionsStiffness(DockArea):
         export_layout.addWidget(filename_path_label,row=2,col=0)
         export_layout.addWidget(filename_path,row=2,col=1)
         export_layout.addWidget(analyze_sections_button,row=3,col=0)
-        
+
         d1.addWidget(export_layout)
-        
+
         self.resize(500,150)
-        
+
         self.show()
-    
+
     def pressed(self):
-        
+
         #try:
         section_ids = ast.literal_eval(self.widgets[0].text())
         filename = self.widgets[1].text()
@@ -1439,14 +1439,14 @@ class ExportSectionsStiffness(DockArea):
         else:
             print('At least one of the values in the following list is not an integer... \n')
             print(section_ids)
-            
+
 class ExportSectionsNeutral(DockArea):
     def __init__(self):
         DockArea.__init__(self)
         d1 = Dock("Export Cross-Sections FEMAP Neutral", size=(500,800))
         self.widgets = []
         self.addDock(d1, 'top')
-        
+
         export_layout = pg.LayoutWidget()
         # Select Which Sections to Export
         sections_label = QtGui.QLabel('Cross-Section IDs:')
@@ -1463,7 +1463,7 @@ class ExportSectionsNeutral(DockArea):
         analyze_sections_button = QtGui.QPushButton('Export Sections')
         analyze_sections_button.clicked.connect(self.pressed)
         self.widgets += [analyze_sections_button]
-        
+
         export_layout.addWidget(sections_label,row=0,col=0)
         export_layout.addWidget(section_ids,row=0,col=1)
         export_layout.addWidget(filename_label,row=1,col=0)
@@ -1471,15 +1471,15 @@ class ExportSectionsNeutral(DockArea):
         export_layout.addWidget(filename_path_label,row=2,col=0)
         export_layout.addWidget(filename_path,row=2,col=1)
         export_layout.addWidget(analyze_sections_button,row=3,col=0)
-        
+
         d1.addWidget(export_layout)
-        
+
         self.resize(500,150)
-        
+
         self.show()
-    
+
     def pressed(self):
-        
+
         #try:
         section_ids = ast.literal_eval(self.widgets[0].text())
         filename = self.widgets[1].text()
@@ -1498,14 +1498,14 @@ class ExportSectionsNeutral(DockArea):
         else:
             print('At least one of the values in the following list is not an integer... \n')
             print(section_ids)
-            
+
 class ExportCriteria(DockArea):
     def __init__(self):
         DockArea.__init__(self)
         d1 = Dock("Export Cross-Sections Results FEMAP Neutral", size=(500,800))
         self.widgets = []
         self.addDock(d1, 'top')
-        
+
         export_layout = pg.LayoutWidget()
         # Select Which Sections to Export
         sections_label = QtGui.QLabel('Cross-Section IDs:')
@@ -1548,7 +1548,7 @@ class ExportCriteria(DockArea):
         crit23_label = QtGui.QCheckBox('Eps_13')
         crit24_label = QtGui.QCheckBox('Eps_12')
         crit25_label = QtGui.QCheckBox('Hoff')
-        
+
         self.critboxes = [crit1_label,crit2_label,crit3_label,crit4_label,\
                           crit5_label,crit6_label,crit7_label,crit8_label,\
                           crit9_label,crit10_label,crit11_label,crit12_label,\
@@ -1556,7 +1556,7 @@ class ExportCriteria(DockArea):
                           crit17_label,crit18_label,crit19_label,crit20_label,\
                           crit21_label,crit22_label,crit23_label,crit24_label,\
                           crit25_label]
-        
+
         export_layout.addWidget(sections_label,row=0,col=0)
         export_layout.addWidget(section_ids,row=0,col=1)
         export_layout.addWidget(filename_label,row=1,col=0)
@@ -1589,16 +1589,16 @@ class ExportCriteria(DockArea):
         export_layout.addWidget(crit23_label,row=25,col=1)
         export_layout.addWidget(crit24_label,row=26,col=1)
         export_layout.addWidget(crit25_label,row=27,col=1)
-        
-        
+
+
         d1.addWidget(export_layout)
-        
+
         self.resize(500,150)
-        
+
         self.show()
-    
+
     def pressed(self):
-        
+
         #try:
         section_ids = ast.literal_eval(self.widgets[0].text())
         filename = self.widgets[1].text()
@@ -1621,7 +1621,7 @@ class ExportCriteria(DockArea):
         else:
             print('At least one of the values in the following list is not an integer... \n')
             print(section_ids)
-            
+
 class LoadNastranPopup(DockArea):
     def __init__(self,filenames):
         DockArea.__init__(self)
@@ -1632,7 +1632,7 @@ class LoadNastranPopup(DockArea):
         self.xdir=None
         self.ydir=None
         self.filenames = filenames
-        
+
         export_layout = pg.LayoutWidget()
         # Select Which Sections to Export
         xdir_label = QtGui.QLabel('Cross-Section x-direction:')
@@ -1662,7 +1662,7 @@ class LoadNastranPopup(DockArea):
         loadNastran = QtGui.QPushButton('Load Nastran File')
         loadNastran.clicked.connect(self.pressed)
         self.widgets += [loadNastran]
-        
+
         export_layout.addWidget(xdir_label,row=0,col=0)
         export_layout.addWidget(xdir,row=0,col=1)
         export_layout.addWidget(ydir_label,row=1,col=0)
@@ -1670,13 +1670,13 @@ class LoadNastranPopup(DockArea):
         export_layout.addWidget(XID_label,row=2,col=0)
         export_layout.addWidget(XID_field,row=2,col=1)
         export_layout.addWidget(loadNastran,row=3,col=0)
-        
+
         d1.addWidget(export_layout)
-        
+
         self.resize(500,150)
-        
+
         self.show()
-    
+
     def pressed(self):
         xdir = self.widgets[0].currentText()
         ydir = self.widgets[1].currentText()
@@ -1711,16 +1711,16 @@ class LoadNastranPopup(DockArea):
                     ydir=3
                 else:
                     ydir=-3
-                
+
                 if XID=="":
                     self.Model.translateNastranDat(self.filenames,xdir,ydir)
                 else:
                     self.Model.translateNastranDat(self.filenames,xdir,ydir,XID=int(XID))
                 self.destroy()
-            
+
         else:
             print('Please enter a valid x and/or y cross-direction. Must be "+x", "-x", "+y", "-y", "+z", or "-z".')
-            
+
 class LoadCSVPopup(DockArea):
     def __init__(self,filenames):
         DockArea.__init__(self)
@@ -1731,7 +1731,7 @@ class LoadCSVPopup(DockArea):
         self.xdir=None
         self.ydir=None
         self.filenames = filenames
-        
+
         export_layout = pg.LayoutWidget()
         # Select Which Sections to Export
         xdir_label = QtGui.QLabel('Loading x-direction:')
@@ -1762,7 +1762,7 @@ class LoadCSVPopup(DockArea):
         loadNastran = QtGui.QPushButton('Load CSV File')
         loadNastran.clicked.connect(self.pressed)
         self.widgets += [loadNastran]
-        
+
         export_layout.addWidget(xdir_label,row=0,col=0)
         export_layout.addWidget(xdir,row=0,col=1)
         export_layout.addWidget(ydir_label,row=1,col=0)
@@ -1770,13 +1770,13 @@ class LoadCSVPopup(DockArea):
         export_layout.addWidget(LF_label,row=2,col=0)
         export_layout.addWidget(LF_field,row=2,col=1)
         export_layout.addWidget(loadNastran,row=3,col=0)
-        
+
         d1.addWidget(export_layout)
-        
+
         self.resize(500,150)
-        
+
         self.show()
-    
+
     def pressed(self):
         xdir = self.widgets[0].currentText()
         ydir = self.widgets[1].currentText()
@@ -1813,15 +1813,15 @@ class LoadCSVPopup(DockArea):
                     ydir=3
                 else:
                     ydir=-3
-                
+
                 self.Model.importSectionLoads(self.filenames,xdir,ydir,LF=LF)
                 self.destroy()
-            
+
         else:
             print('Please enter a valid x and/or y cross-direction. Must be "x", "y", or "z".')
-        
+
 
 # Start Qt event loop unless running in interactive mode or using pyside.
 if __name__ == '__main__':
     GUI = GUI()
-    
+

@@ -1,5 +1,5 @@
-from Structures import XSect,NodeLibrary, XNodeLibrary, MaterialLibrary, XElementLibrary, LaminateLibrary, Mesh, CrossSectionLibrary, BeamElementLibrary, BeamLibrary
-from Utils import decomposeRotation
+from .Structures import XSect,NodeLibrary, XNodeLibrary, MaterialLibrary, XElementLibrary, LaminateLibrary, Mesh, CrossSectionLibrary, BeamElementLibrary, BeamLibrary
+from .Utils import decomposeRotation
 import pyqtgraph.opengl as gl
 import sys
 import numpy as np
