@@ -5623,8 +5623,12 @@ class XSect:
         self.xtransl = -xavg
         self.ytransl = -yavg
 
+        # TODO Investigate why following code in multiline comment was originally
+        # used by AeroComBAT in every section. By uncommenting this results
+        """
         for NID, node in self.nodeDict.items():
             node.translate(self.xtransl,self.ytransl)
+        """
 
         xmax = -1e6
         xmin = 1e6
@@ -6064,8 +6068,7 @@ class XSect:
         F = Xcompr.T*t1+dXdzcompr.T*t2+Ycompr.T*t3
         #print(F)
         F = F.toarray()
-        t3 = time.time()
-        print('Cross-sectional analysis complete. Time taken = %4.4f' %(t3-t0))
+        print('Cross-sectional analysis complete. Time taken = %4.4f' %(time.time()-t0))
         # Store the compliance matrix taken about the xsect origin
         self.F_raw = F
         #print(F)
@@ -6144,13 +6147,19 @@ class XSect:
                 'keyword, nor a valid length 2 array containing the x and y'\
                 'beam axis reference coordinates for the cross-section.')
         # Strain reference axis transformation
-        self.T1 = np.array([[1.,0.,0.,0.,0.,-yref],[0.,1.,0.,0.,0.,xref],\
-            [0.,0.,1.,yref,-xref,0.],[0.,0.,0.,1.,0.,0.],[0.,0.,0.,0.,1.,0.],\
-            [0.,0.,0.,0.,0.,1.]])
+        self.T1 = np.array([[1.,0.,0.,0.,0.,-yref],
+                            [0.,1.,0.,0.,0.,xref],\
+                            [0.,0.,1.,yref,-xref,0.],
+                            [0.,0.,0.,1.,0.,0.],
+                            [0.,0.,0.,0.,1.,0.],\
+                            [0.,0.,0.,0.,0.,1.]])
         # Force reference axis transformation
-        self.T2 = np.array([[1.,0.,0.,0.,0.,0.],[0.,1.,0.,0.,0.,0.],\
-            [0.,0.,1.,0.,0.,0.],[0.,0.,-yref,1.,0.,0.],[0.,0.,xref,0.,1.,0.],\
-            [yref,-xref,0.,0.,0.,1.]])
+        self.T2 = np.array([[1.,0.,0.,0.,0.,0.],
+                            [0.,1.,0.,0.,0.,0.],\
+                            [0.,0.,1.,0.,0.,0.],
+                            [0.,0.,-yref,1.,0.,0.],
+                            [0.,0.,xref,0.,1.,0.],\
+                            [yref,-xref,0.,0.,0.,1.]])
         self.F = np.dot(np.linalg.inv(self.T1),np.dot(self.F_raw,self.T2))
         self.K = np.dot(np.linalg.inv(self.T2),np.dot(self.K_raw,self.T1))
 
